@@ -9,6 +9,9 @@ nuxt-web/
 ├── app/
 │   ├── components/
 │   │   └── TarotCard.vue          # 塔羅牌正反面、翻牌動畫與單張牌義
+│   ├── assets/
+│   │   └── css/
+│   │       └── animate.min.css    # Animate.css v4.1.1 官方動畫資源
 │   ├── pages/
 │   │   └── index.vue              # 首頁與完整三張牌占卜流程
 │   ├── plugin/
@@ -62,6 +65,10 @@ Nuxt 檔案式路由的首頁，對應網站 `/` 路徑，負責：
 
 可重複使用的塔羅牌元件。接收牌卡內容、位置及翻牌狀態，顯示牌背、牌面、關鍵字與解讀，並向首頁傳送翻牌事件。
 
+### `app/assets/css/animate.min.css`
+
+取自 [Animate.css 官方 GitHub v4.1.1](https://github.com/animate-css/animate.css/tree/v4.1.1) 的本地動畫樣式。網站使用其進場、縮放、脈動與離場動畫，並透過 `nuxt.config.ts` 全域載入。
+
 ### `app/plugin/firebase.client.ts`
 
 建立 Firebase App 與 Firestore 實例。檔名中的 `.client` 表示此外掛只在瀏覽器端執行，避免伺服器端渲染時使用瀏覽器專屬功能。
@@ -82,6 +89,8 @@ Nuxt 的主要設定檔，目前包含相容日期、開發工具、繁體中文
 npm install
 npm run dev
 ```
+
+"ctrl + C" 可停止開發伺服器
 
 開啟 <http://localhost:3000> 即可查看網站。
 

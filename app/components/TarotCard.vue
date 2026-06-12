@@ -40,7 +40,11 @@ const emit = defineEmits<{ flip: [] }>()
 
         <span class="card-face card-front">
           <span class="card-number">{{ card?.number }}</span>
-          <span class="card-symbol" aria-hidden="true">{{ card?.symbol }}</span>
+          <span
+            class="card-symbol"
+            :class="{ 'animate__animated animate__zoomIn': revealed }"
+            aria-hidden="true"
+          >{{ card?.symbol }}</span>
           <span class="card-name">{{ card?.name }}</span>
           <span class="card-english">{{ card?.english }}</span>
           <span class="card-keywords">{{ card?.keywords }}</span>

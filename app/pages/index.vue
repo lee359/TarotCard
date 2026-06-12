@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ObjectDirective } from 'vue'
+
 type Question = '感情' | '事業' | '自我' | '今日指引'
 type Card = { number: string; name: string; english: string; symbol: string; keywords: string; meaning: string }
 
@@ -16,6 +18,26 @@ const phase = ref<'intro' | 'drawing' | 'reading'>('intro')
 const revealed = ref([false, false, false])
 const drawnCards = ref<Card[]>([])
 const positions = ['過去 · 根源', '現在 · 課題', '未來 · 指引']
+
+const vReveal: ObjectDirective<HTMLElement, string> = {
+  mounted(element, binding) {
+    if (
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      || !('IntersectionObserver' in window)
+    ) {
+      element.classList.add('animate__animated')
+      return
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) return
+      element.classList.add('animate__animated', binding.value)
+      observer.unobserve(element)
+    }, { threshold: 0.18 })
+
+    observer.observe(element)
+  }
+}
 
 const deck: Card[] = [
   { number: '0', name: '愚者', english: 'THE FOOL', symbol: '☼', keywords: '啟程 · 自由 · 信任', meaning: '保持初衷。未知不是阻礙，而是邀請你輕盈前行的空間。' },
@@ -66,7 +88,7 @@ function resetReading() {
 <template>
   <main>
     <section class="hero" :class="{ compact: phase !== 'intro' }">
-      <nav class="nav" aria-label="主要導覽">
+      <nav class="nav animate__animated animate__fadeInDown" aria-label="主要導覽">
         <a class="brand" href="#top" aria-label="月之秘語首頁">
           <span class="brand-mark">☾</span>
           <span>月之秘語<small>LUNA ARCANA</small></span>
@@ -75,12 +97,12 @@ function resetReading() {
       </nav>
 
       <div id="top" class="hero-content">
-        <p class="eyebrow"><span /> LISTEN TO YOUR INNER VOICE <span /></p>
-        <div class="moon" aria-hidden="true"><span>☾</span></div>
-        <h1>答案，一直都在你心裡</h1>
-        <p class="lead">讓塔羅成為一面鏡子，映照此刻的你。<br>深呼吸，想著你的問題，然後選擇一個指引。</p>
+        <p class="eyebrow animate__animated animate__fadeIn"><span /> LISTEN TO YOUR INNER VOICE <span /></p>
+        <div class="moon animate__animated animate__zoomIn" aria-hidden="true"><span class="animate__animated animate__pulse animate__infinite animate__slower">☾</span></div>
+        <h1 class="animate__animated animate__fadeInUp hero-title">答案，一直都在你心裡</h1>
+        <p class="lead animate__animated animate__fadeInUp hero-lead">讓塔羅成為一面鏡子，映照此刻的你。<br>深呼吸，想著你的問題，然後選擇一個指引。</p>
 
-        <div v-if="phase === 'intro'" class="question-panel">
+        <div v-if="phase === 'intro'" class="question-panel animate__animated animate__fadeInUp">
           <p>此刻，你想問的是——</p>
           <div class="question-tabs" role="group" aria-label="選擇占卜主題">
             <button v-for="question in questions" :key="question" :class="{ active: activeQuestion === question }" @click="activeQuestion = question">
@@ -95,8 +117,8 @@ function resetReading() {
       </div>
     </section>
 
-    <section v-if="phase !== 'intro'" id="reading" class="reading-section">
-      <div class="section-heading">
+    <section v-if="phase !== 'intro'" id="reading" class="reading-section animate__animated animate__fadeIn">
+      <div class="section-heading animate__animated animate__fadeInUp">
         <p class="eyebrow"><span /> YOUR THREE-CARD SPREAD <span /></p>
         <h2>{{ allRevealed ? '牌已為你揭示' : '憑直覺，依序翻開三張牌' }}</h2>
         <p>{{ allRevealed ? '不必急著定義答案，先感受哪一句話最靠近你。' : `你所詢問的主題：${activeQuestion}` }}</p>
@@ -106,6 +128,8 @@ function resetReading() {
         <TarotCard
           v-for="(position, index) in positions"
           :key="position"
+          class="animate__animated animate__fadeInUp tarot-stagger"
+          :style="{ '--card-delay': `${index * 180}ms` }"
           :position="position"
           :card="drawnCards[index]"
           :revealed="revealed[index]"
@@ -114,7 +138,10 @@ function resetReading() {
         />
       </div>
 
-      <Transition name="reading-result">
+      <Transition
+        enter-active-class="animate__animated animate__zoomIn"
+        leave-active-class="animate__animated animate__fadeOutDown"
+      >
         <article v-if="allRevealed" class="result-panel">
           <span class="result-icon">✦</span>
           <p class="result-label">給你的整體訊息</p>
@@ -126,7 +153,7 @@ function resetReading() {
       </Transition>
     </section>
 
-    <section id="about" class="about-section">
+    <section id="about" v-reveal="'animate__fadeInUp'" class="about-section reveal-section">
       <p class="eyebrow"><span /> A GENTLE REMINDER <span /></p>
       <h2>塔羅不是預言，是與自己對話的方式</h2>
       <p>牌卡提供的是象徵與視角，不替你做決定。請把最終選擇留在自己手中，也讓現實中的專業建議成為你的支持。</p>
@@ -159,12 +186,16 @@ main { min-height: 100vh; overflow: hidden; background: var(--night); }
 .eyebrow { display: flex; align-items: center; justify-content: center; gap: 13px; color: var(--gold); font-size: 9px; letter-spacing: .32em; }
 .eyebrow span { width: 34px; height: 1px; background: var(--gold); opacity: .5; }
 .moon { position: relative; display: grid; width: 120px; height: 120px; margin: 13px 0 6px; place-items: center; border: 1px solid rgba(212,179,106,.18); border-radius: 50%; color: var(--gold-light); font: 78px Georgia, serif; filter: drop-shadow(0 0 28px rgba(240,217,156,.18)); }
+.moon > span { display: block; }
 .moon::before, .moon::after { content: ''; position: absolute; width: 155px; height: 42px; border: 1px solid rgba(212,179,106,.25); border-radius: 50%; transform: rotate(24deg); }
 .moon::after { transform: rotate(-24deg); }
 h1, h2, h3 { margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 600; }
 h1 { font-size: clamp(38px, 5.5vw, 68px); letter-spacing: .08em; line-height: 1.3; }
 .lead { margin: 22px 0 0; color: var(--muted); font-family: 'Noto Serif TC', serif; font-size: 15px; line-height: 2; letter-spacing: .06em; }
+.hero-title { --animate-delay: .15s; animation-delay: var(--animate-delay); }
+.hero-lead { --animate-delay: .3s; animation-delay: var(--animate-delay); }
 .question-panel { width: min(620px, 100%); margin-top: 38px; }
+.question-panel { --animate-delay: .45s; animation-delay: var(--animate-delay); }
 .question-panel > p { color: #d2ccda; font-family: 'Noto Serif TC', serif; font-size: 14px; }
 .question-tabs { display: grid; margin: 16px 0 25px; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
 .question-tabs button { padding: 13px 8px; border: 0; border-right: 1px solid var(--line); background: rgba(17,14,38,.55); color: var(--muted); cursor: pointer; font-size: 12px; letter-spacing: .08em; transition: .25s ease; }
@@ -179,6 +210,7 @@ h1 { font-size: clamp(38px, 5.5vw, 68px); letter-spacing: .08em; line-height: 1.
 .section-heading h2, .about-section h2 { margin-top: 18px; font-size: clamp(27px, 4vw, 42px); letter-spacing: .08em; }
 .section-heading > p:last-child { margin-top: 14px; color: var(--muted); font-family: 'Noto Serif TC', serif; font-size: 14px; }
 .cards-grid { display: grid; max-width: 920px; margin: 58px auto 0; grid-template-columns: repeat(3, 1fr); gap: 48px; justify-items: center; align-items: start; }
+.tarot-stagger { animation-delay: var(--card-delay); }
 .result-panel { max-width: 760px; margin: 85px auto 0; padding: 48px 55px; border: 1px solid var(--line); background: linear-gradient(135deg, rgba(35,28,64,.75), rgba(15,13,33,.8)); text-align: center; box-shadow: 0 25px 80px rgba(0,0,0,.25); }
 .result-icon { color: var(--gold-light); font-size: 25px; }
 .result-label { color: var(--gold); font-size: 9px; letter-spacing: .3em; }
@@ -187,8 +219,9 @@ h1 { font-size: clamp(38px, 5.5vw, 68px); letter-spacing: .08em; line-height: 1.
 .affirmation { margin: 26px 0; color: var(--gold-light); font-family: 'Noto Serif TC', serif; font-size: 16px; }
 .secondary-button { padding: 12px 22px; background: transparent; color: var(--gold-light); font-size: 11px; }
 .secondary-button:hover { background: var(--gold); color: var(--night); }
-.reading-result-enter-active { transition: .8s ease; }.reading-result-enter-from { opacity: 0; transform: translateY(30px); }
 .about-section { padding: 110px 25px; border-top: 1px solid rgba(212,179,106,.1); background: #0d0b1e; text-align: center; }
+.reveal-section { opacity: 0; }
+.reveal-section.animate__animated { opacity: 1; }
 .about-section > p:not(.eyebrow) { max-width: 670px; margin: 24px auto 0; color: var(--muted); font-family: 'Noto Serif TC', serif; font-size: 14px; line-height: 2.1; }
 .principles { display: flex; max-width: 700px; margin: 48px auto 0; justify-content: space-between; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .principles span { flex: 1; padding: 22px 12px; color: #c7c1cf; font-size: 12px; letter-spacing: .12em; }
