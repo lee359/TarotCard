@@ -95,10 +95,11 @@ onMounted(drawCards)
       <p v-else class="loading">正在洗牌，請稍候片刻...</p>
 
       <Transition
-        enter-active-class="animate__animated animate__zoomIn"
-        leave-active-class="animate__animated animate__fadeOutDown"
+        enter-active-class="animate__animated animate__fadeIn"
+        leave-active-class="animate__animated animate__fadeOut"
       >
-        <article v-if="allRevealed" class="result-panel">
+        <div v-if="allRevealed" class="result-overlay">
+          <article class="result-panel animate__animated animate__zoomIn">
           <span class="result-icon">✦</span>
           <p class="result-label">給你的整體訊息</p>
           <h2>{{ readingTitle }}</h2>
@@ -108,7 +109,8 @@ onMounted(drawCards)
             <button class="secondary-button" @click="drawCards">重新抽牌 <span>↻</span></button>
             <NuxtLink class="text-link" to="/">更換占卜主題</NuxtLink>
           </div>
-        </article>
+          </article>
+        </div>
       </Transition>
     </section>
 
@@ -136,7 +138,16 @@ h1, h2 { margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 600; }
 .cards-grid :deep(.card-slot) { width: min(100%, clamp(185px, 24vh, 230px)); }
 .tarot-stagger { animation-delay: var(--card-delay); }
 .loading { margin: 58px 0 0; color: var(--muted); text-align: center; letter-spacing: .12em; }
-.result-panel { max-width: 720px; margin: clamp(22px, 3vh, 34px) auto 0; padding: clamp(18px, 3vh, 28px) clamp(24px, 4vw, 44px); border: 1px solid var(--line); background: linear-gradient(135deg, rgba(35,28,64,.75), rgba(15,13,33,.8)); text-align: center; box-shadow: 0 25px 80px rgba(0,0,0,.25); }
+.result-overlay {
+  position: fixed; inset: 0; z-index: 20; display: grid; padding: clamp(24px, 5vw, 52px);
+  place-items: center; background: rgba(10, 9, 25, .72); backdrop-filter: blur(8px);
+}
+.result-panel {
+  width: min(720px, 100%); max-height: min(78dvh, 620px); overflow-y: auto;
+  padding: clamp(26px, 4vh, 40px) clamp(24px, 4vw, 44px); border: 1px solid var(--gold);
+  background: linear-gradient(135deg, rgba(35,28,64,.95), rgba(15,13,33,.98));
+  text-align: center; box-shadow: 0 30px 90px rgba(0,0,0,.45); --animate-duration: .65s;
+}
 .result-icon { color: var(--gold-light); font-size: 25px; }
 .result-label { color: var(--gold); font-size: 9px; letter-spacing: .3em; }
 .result-panel h2 { margin: 16px 0 20px; font-size: clamp(22px, 3vw, 31px); letter-spacing: .06em; }
@@ -155,6 +166,7 @@ h1, h2 { margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 600; }
   .reading-section { min-height: auto; padding: 70px 20px 85px; }
   .cards-grid { max-width: 320px; grid-template-columns: 1fr; gap: 55px; }
   .cards-grid :deep(.card-slot) { width: min(100%, 260px); }
-  .result-panel { padding: 38px 24px; }
+  .result-overlay { padding: 18px; align-items: end; }
+  .result-panel { max-height: 82dvh; padding: 32px 22px; }
 }
 </style>
