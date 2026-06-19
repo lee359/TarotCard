@@ -13,7 +13,9 @@ nuxt-web/
 │   │   └── css/
 │   │       └── animate.min.css    # Animate.css v4.1.1 官方動畫資源
 │   ├── pages/
-│   │   └── index.vue              # 首頁與完整三張牌占卜流程
+│   │   ├── about.vue              # 關於占卜的獨立頁面
+│   │   ├── index.vue              # 首頁主視覺與占卜主題選擇
+│   │   └── reading.vue            # 三張牌翻牌與解讀頁面
 │   ├── plugin/
 │   │   └── firebase.client.ts     # 僅在瀏覽器載入的 Firebase 外掛
 │   └── app.vue                    # Nuxt 根元件與全域樣式
@@ -55,15 +57,27 @@ nuxt-web/
 Nuxt 檔案式路由的首頁，對應網站 `/` 路徑，負責：
 
 - 感情、事業、自我與今日指引的主題選擇
+- 將使用者導向 `/reading`
+- 首頁主視覺、導覽與網站入口
+- 頁面的 SEO 標題與描述
+
+### `app/pages/reading.vue`
+
+獨立的三張牌翻牌頁面，對應網站 `/reading` 路徑，負責：
+
+- 從 `/reading?topic=感情` 這類網址讀取占卜主題
 - 洗牌及隨機抽取三張牌
 - 過去、現在、未來的依序翻牌流程
 - 單張牌義與整體占卜訊息
-- 重新占卜及首頁各區塊內容
-- 頁面的 SEO 標題與描述
+- 重新抽牌及返回首頁更換主題
+
+### `app/pages/about.vue`
+
+獨立的「關於占卜」頁面，對應網站 `/about` 路徑，說明塔羅牌占卜的定位、使用提醒與三個閱讀原則。
 
 ### `app/components/TarotCard.vue`
 
-可重複使用的塔羅牌元件。接收牌卡內容、位置及翻牌狀態，顯示牌背、牌面、關鍵字與解讀，並向首頁傳送翻牌事件。
+可重複使用的塔羅牌元件。接收牌卡內容、位置及翻牌狀態，顯示牌背、牌面、關鍵字與解讀，並向父層頁面傳送翻牌事件。
 
 ### `app/assets/css/animate.min.css`
 
@@ -113,6 +127,16 @@ npm run preview
     └── Nuxt app/app.vue
         └── <NuxtPage />
             └── app/pages/index.vue
+
+瀏覽器請求 /about
+    └── Nuxt app/app.vue
+        └── <NuxtPage />
+            └── app/pages/about.vue
+
+瀏覽器請求 /reading
+    └── Nuxt app/app.vue
+        └── <NuxtPage />
+            └── app/pages/reading.vue
                 └── app/components/TarotCard.vue × 3
 ```
 
