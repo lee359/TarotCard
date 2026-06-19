@@ -21,7 +21,7 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; background: var(--night); color: var(--ink); }
+body { margin: 0; overflow-x: clip; background: var(--night); color: var(--ink); }
 button, input { font: inherit; }
 button { color: inherit; }
 ::selection { background: var(--gold); color: var(--night); }

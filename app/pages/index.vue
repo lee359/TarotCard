@@ -57,58 +57,62 @@ function startReading() {
           <small>你的選擇不會被儲存，每次占卜都是獨一無二的相遇</small>
         </div>
       </div>
+
+      <footer>
+        <NuxtLink class="footer-brand" to="/">
+          <span class="footer-mark">☾</span>
+          <span>月之秘語<small>LUNA ARCANA</small></span>
+        </NuxtLink>
+        <p>願你在每一次提問裡，更靠近真實的自己。</p>
+        <small>© {{ new Date().getFullYear() }} LUNA ARCANA · 僅供自我探索與娛樂</small>
+      </footer>
     </section>
 
-    <footer>
-      <NuxtLink class="brand footer-brand" to="/">
-        <span class="brand-mark">☾</span>
-        <span>月之秘語<small>LUNA ARCANA</small></span>
-      </NuxtLink>
-      <p>願你在每一次提問裡，更靠近真實的自己。</p>
-      <small>© {{ new Date().getFullYear() }} LUNA ARCANA · 僅供自我探索與娛樂</small>
-    </footer>
   </main>
 </template>
 
 <style scoped>
-main { min-height: 100vh; overflow: hidden; background: var(--night); }
-.hero { position: relative; min-height: 100svh; isolation: isolate; background: radial-gradient(circle at 50% 28%, rgba(86,64,129,.38), transparent 28%), radial-gradient(circle at 20% 20%, rgba(67,46,106,.2), transparent 30%), linear-gradient(180deg, #0e0b21, #090817); }
+main { height: 100dvh; overflow: clip; background: var(--night); }
+.hero { --edge-height: clamp(50px, 7vh, 64px); position: relative; display: grid; height: 100dvh; overflow: clip; isolation: isolate; grid-template-rows: var(--edge-height) minmax(0, 1fr) var(--edge-height); background: radial-gradient(circle at 50% 28%, rgba(86,64,129,.38), transparent 28%), radial-gradient(circle at 20% 20%, rgba(67,46,106,.2), transparent 30%), linear-gradient(180deg, #0e0b21, #090817); }
 .hero::before { content: ''; position: absolute; inset: 0; z-index: -1; opacity: .55; background-image: radial-gradient(circle, rgba(240,217,156,.8) 0 1px, transparent 1.5px), radial-gradient(circle, rgba(240,217,156,.45) 0 1px, transparent 1.5px); background-position: 5% 12%, 74% 20%; background-size: 140px 140px, 210px 210px; mask-image: linear-gradient(to bottom, black, transparent 85%); }
-.hero::after { content: ''; position: absolute; left: 50%; bottom: -120px; z-index: -1; width: 900px; height: 280px; border: 1px solid rgba(212,179,106,.12); border-radius: 50%; transform: translateX(-50%); box-shadow: 0 0 80px rgba(86,64,129,.1); }
-.nav { display: flex; width: min(1160px, calc(100% - 48px)); margin: auto; padding: 28px 0; align-items: center; justify-content: space-between; }
+.hero::after { content: ''; position: absolute; left: 50%; bottom: 0; z-index: -1; width: min(900px, 88vw); height: 280px; border: 1px solid rgba(212,179,106,.12); border-radius: 50%; transform: translate(-50%, 55%); box-shadow: 0 0 80px rgba(86,64,129,.1); }
+.nav { display: flex; width: min(1080px, calc(100% - 48px)); height: var(--edge-height); margin: 0 auto; padding: 0; align-items: center; justify-content: space-between; }
 .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); font-family: 'Noto Serif TC', serif; font-size: 16px; letter-spacing: .14em; text-decoration: none; }
 .brand-mark { display: grid; width: 37px; height: 37px; place-items: center; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold-light); font-family: Georgia, serif; font-size: 22px; }
 .brand small { display: block; margin-top: 3px; color: var(--gold); font-family: 'DM Sans', sans-serif; font-size: 7px; letter-spacing: .26em; }
 .nav-link { color: var(--muted); font-size: 12px; letter-spacing: .15em; text-decoration: none; }
 .nav-link:hover { color: var(--gold-light); }
-.hero-content { display: flex; width: min(900px, calc(100% - 40px)); margin: auto; padding: 40px 0 90px; align-items: center; flex-direction: column; text-align: center; }
+.hero-content { display: flex; width: min(740px, calc(100% - 40px)); margin: 0 auto; padding: clamp(6px, 1.5vh, 14px) 0 clamp(10px, 2vh, 18px); align-items: center; min-height: 0; flex-direction: column; justify-content: center; text-align: center; }
 .eyebrow { display: flex; align-items: center; justify-content: center; gap: 13px; color: var(--gold); font-size: 9px; letter-spacing: .32em; }
 .eyebrow span { width: 34px; height: 1px; background: var(--gold); opacity: .5; }
-.moon { position: relative; display: grid; width: 120px; height: 120px; margin: 13px 0 6px; place-items: center; border: 1px solid rgba(212,179,106,.18); border-radius: 50%; color: var(--gold-light); font: 78px Georgia, serif; filter: drop-shadow(0 0 28px rgba(240,217,156,.18)); }
+.moon { position: relative; display: grid; width: clamp(62px, 9vh, 86px); height: clamp(62px, 9vh, 86px); margin: clamp(4px, 1vh, 8px) 0 3px; place-items: center; border: 1px solid rgba(212,179,106,.18); border-radius: 50%; color: var(--gold-light); font: clamp(42px, 6.2vh, 56px) Georgia, serif; filter: drop-shadow(0 0 28px rgba(240,217,156,.18)); }
 .moon > span { display: block; }
-.moon::before, .moon::after { content: ''; position: absolute; width: 155px; height: 42px; border: 1px solid rgba(212,179,106,.25); border-radius: 50%; transform: rotate(24deg); }
+.moon::before, .moon::after { content: ''; position: absolute; width: clamp(96px, 15vh, 132px); height: clamp(28px, 4.5vh, 38px); border: 1px solid rgba(212,179,106,.25); border-radius: 50%; transform: rotate(24deg); }
 .moon::after { transform: rotate(-24deg); }
-h1 { margin: 0; font-family: 'Noto Serif TC', serif; font-size: clamp(38px, 5.5vw, 68px); font-weight: 600; letter-spacing: .08em; line-height: 1.3; }
-.lead { margin: 22px 0 0; color: var(--muted); font-family: 'Noto Serif TC', serif; font-size: 15px; line-height: 2; letter-spacing: .06em; }
+h1 { margin: 0; font-family: 'Noto Serif TC', serif; font-size: clamp(30px, 3.7vw, 48px); font-weight: 600; letter-spacing: .08em; line-height: 1.16; }
+.lead { margin: clamp(8px, 1.4vh, 12px) 0 0; color: var(--muted); font-family: 'Noto Serif TC', serif; font-size: clamp(12px, 1.4vh, 14px); line-height: 1.65; letter-spacing: .06em; }
 .hero-title { --animate-delay: .15s; animation-delay: var(--animate-delay); }
 .hero-lead { --animate-delay: .3s; animation-delay: var(--animate-delay); }
-.question-panel { width: min(620px, 100%); margin-top: 38px; --animate-delay: .45s; animation-delay: var(--animate-delay); }
+.question-panel { width: min(560px, 100%); margin-top: clamp(12px, 2.2vh, 20px); --animate-delay: .45s; animation-delay: var(--animate-delay); }
 .question-panel > p { color: #d2ccda; font-family: 'Noto Serif TC', serif; font-size: 14px; }
-.question-tabs { display: grid; margin: 16px 0 25px; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
-.question-tabs button { padding: 13px 8px; border: 0; border-right: 1px solid var(--line); background: rgba(17,14,38,.55); color: var(--muted); cursor: pointer; font-size: 12px; letter-spacing: .08em; transition: .25s ease; }
+.question-tabs { display: grid; margin: 10px 0 14px; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.question-tabs button { padding: clamp(9px, 1.6vh, 12px) 8px; border: 0; border-right: 1px solid var(--line); background: rgba(17,14,38,.55); color: var(--muted); cursor: pointer; font-size: 12px; letter-spacing: .08em; transition: .25s ease; }
 .question-tabs button:last-child { border-right: 0; }
 .question-tabs button:hover, .question-tabs button.active { background: var(--gold); color: #131025; }
-.primary-button { display: flex; min-width: 245px; margin: auto; padding: 15px 22px; align-items: center; justify-content: center; gap: 55px; border: 1px solid var(--gold); background: var(--gold); color: #151129; cursor: pointer; letter-spacing: .14em; transition: .25s ease; }
+.primary-button { display: flex; min-width: 230px; margin: auto; padding: clamp(11px, 2vh, 14px) 22px; align-items: center; justify-content: center; gap: 55px; border: 1px solid var(--gold); background: var(--gold); color: #151129; cursor: pointer; letter-spacing: .14em; transition: .25s ease; }
 .primary-button:hover { background: var(--gold-light); box-shadow: 0 0 30px rgba(212,179,106,.2); transform: translateY(-2px); }
-.question-panel > small { display: block; margin-top: 15px; color: #6f6b7b; font-size: 10px; letter-spacing: .06em; }
-footer { display: flex; padding: 55px max(24px, calc((100% - 1160px) / 2)); align-items: center; justify-content: space-between; gap: 30px; background: #070612; color: #6f6b7b; font-size: 11px; }
-.footer-brand { opacity: .75; }
-.footer-brand .brand-mark { width: 30px; height: 30px; font-size: 18px; }
-footer > p { font-family: 'Noto Serif TC', serif; }
+.question-panel > small { display: block; margin-top: 10px; color: #6f6b7b; font-size: 10px; letter-spacing: .06em; }
+footer { position: relative; z-index: 1; display: grid; width: min(1080px, calc(100% - 48px)); height: var(--edge-height); margin: 0 auto; padding: 0; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center; border-top: 1px solid rgba(212,179,106,.1); color: #6f6b7b; font-size: 10px; }
+.footer-brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font-family: 'Noto Serif TC', serif; font-size: 12px; letter-spacing: .12em; text-decoration: none; opacity: .8; }
+.footer-brand small { display: block; margin-top: 2px; color: var(--gold); font-family: 'DM Sans', sans-serif; font-size: 6px; letter-spacing: .22em; }
+.footer-mark { display: grid; width: 28px; height: 28px; place-items: center; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold-light); font-family: Georgia, serif; font-size: 17px; }
+footer p { margin: 0; text-align: center; font-family: 'Noto Serif TC', serif; }
+footer > small { text-align: right; }
 @media (max-width: 760px) {
+  .hero { min-height: auto; }
   .nav { width: calc(100% - 32px); padding-top: 20px; }
   .nav-link { font-size: 11px; }
-  .hero-content { padding-top: 25px; }
+  .hero-content { justify-content: center; padding-top: 20px; }
   .moon { width: 95px; height: 95px; font-size: 62px; }
   .moon::before, .moon::after { width: 125px; }
   h1 { letter-spacing: .04em; }
@@ -116,6 +120,8 @@ footer > p { font-family: 'Noto Serif TC', serif; }
   .question-tabs { grid-template-columns: repeat(2,1fr); }
   .question-tabs button:nth-child(2) { border-right: 0; }
   .question-tabs button:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
-  footer { flex-direction: column; text-align: center; }
+  footer { width: calc(100% - 32px); grid-template-columns: 1fr; gap: 4px; text-align: center; }
+  .footer-brand { justify-content: center; }
+  footer > small { text-align: center; }
 }
 </style>

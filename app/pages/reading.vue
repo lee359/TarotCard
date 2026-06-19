@@ -112,38 +112,31 @@ onMounted(drawCards)
       </Transition>
     </section>
 
-    <footer>
-      <NuxtLink class="brand footer-brand" to="/">
-        <span class="brand-mark">☾</span>
-        <span>月之秘語<small>LUNA ARCANA</small></span>
-      </NuxtLink>
-      <p>願你在每一次提問裡，更靠近真實的自己。</p>
-      <small>© {{ new Date().getFullYear() }} LUNA ARCANA · 僅供自我探索與娛樂</small>
-    </footer>
   </main>
 </template>
 
 <style scoped>
-main { min-height: 100vh; overflow: hidden; background: radial-gradient(circle at 50% 28%, rgba(60,47,102,.22), transparent 35%), #0a0919; color: var(--ink); }
+main { display: grid; height: 100dvh; overflow: clip; grid-template-rows: clamp(56px, 7.5vh, 70px) minmax(0, 1fr); background: radial-gradient(circle at 50% 28%, rgba(60,47,102,.22), transparent 35%), #0a0919; color: var(--ink); }
 main::before { content: ''; position: fixed; inset: 0; pointer-events: none; opacity: .5; background-image: radial-gradient(circle, rgba(240,217,156,.8) 0 1px, transparent 1.5px), radial-gradient(circle, rgba(240,217,156,.45) 0 1px, transparent 1.5px); background-position: 5% 12%, 74% 20%; background-size: 140px 140px, 210px 210px; mask-image: linear-gradient(to bottom, black, transparent 85%); }
-.nav { position: relative; z-index: 1; display: flex; width: min(1160px, calc(100% - 48px)); margin: auto; padding: 28px 0; align-items: center; justify-content: space-between; }
+.nav { position: relative; z-index: 1; display: flex; width: min(1080px, calc(100% - 48px)); margin: 0 auto; padding: clamp(9px, 1.5vh, 14px) 0; align-items: center; justify-content: space-between; }
 .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); font-family: 'Noto Serif TC', serif; font-size: 16px; letter-spacing: .14em; text-decoration: none; }
 .brand-mark { display: grid; width: 37px; height: 37px; place-items: center; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold-light); font-family: Georgia, serif; font-size: 22px; }
 .brand small { display: block; margin-top: 3px; color: var(--gold); font-family: 'DM Sans', sans-serif; font-size: 7px; letter-spacing: .26em; }
 .nav-actions { display: flex; align-items: center; gap: 24px; }
 .nav-link { color: var(--muted); font-size: 12px; letter-spacing: .15em; text-decoration: none; }
 .nav-link:hover { color: var(--gold-light); }
-.reading-section { position: relative; z-index: 1; padding: 82px 30px 125px; }
-.section-heading { max-width: 700px; margin: auto; text-align: center; }
+.reading-section { position: relative; z-index: 1; display: grid; min-height: 0; padding: clamp(4px, 1vh, 10px) 30px clamp(14px, 2.4vh, 24px); grid-template-rows: auto minmax(0, 1fr) auto; align-items: start; }
+.section-heading { max-width: 700px; margin: 0 auto; padding-top: clamp(8px, 2vh, 18px); text-align: center; }
 .eyebrow { display: flex; align-items: center; justify-content: center; gap: 13px; color: var(--gold); font-size: 9px; letter-spacing: .32em; }
 .eyebrow span { width: 34px; height: 1px; background: var(--gold); opacity: .5; }
 h1, h2 { margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 600; }
-.section-heading h1 { margin-top: 18px; font-size: clamp(27px, 4vw, 42px); letter-spacing: .08em; }
-.section-heading > p:last-child { margin-top: 14px; color: var(--muted); font-family: 'Noto Serif TC', serif; font-size: 14px; }
-.cards-grid { display: grid; max-width: 920px; margin: 58px auto 0; grid-template-columns: repeat(3, 1fr); gap: 48px; justify-items: center; align-items: start; }
+.section-heading h1 { margin-top: clamp(6px, 1.2vh, 10px); font-size: clamp(25px, 3.2vw, 36px); letter-spacing: .08em; line-height: 1.18; }
+.section-heading > p:last-child { margin-top: clamp(6px, 1.2vh, 10px); color: var(--muted); font-family: 'Noto Serif TC', serif; font-size: 13px; }
+.cards-grid { display: grid; width: min(100%, 820px); margin: clamp(18px, 3vh, 28px) auto 0; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(28px, 5vw, 62px); justify-items: center; align-items: start; }
+.cards-grid :deep(.card-slot) { width: min(100%, clamp(185px, 24vh, 230px)); }
 .tarot-stagger { animation-delay: var(--card-delay); }
 .loading { margin: 58px 0 0; color: var(--muted); text-align: center; letter-spacing: .12em; }
-.result-panel { max-width: 760px; margin: 85px auto 0; padding: 48px 55px; border: 1px solid var(--line); background: linear-gradient(135deg, rgba(35,28,64,.75), rgba(15,13,33,.8)); text-align: center; box-shadow: 0 25px 80px rgba(0,0,0,.25); }
+.result-panel { max-width: 720px; margin: clamp(22px, 3vh, 34px) auto 0; padding: clamp(18px, 3vh, 28px) clamp(24px, 4vw, 44px); border: 1px solid var(--line); background: linear-gradient(135deg, rgba(35,28,64,.75), rgba(15,13,33,.8)); text-align: center; box-shadow: 0 25px 80px rgba(0,0,0,.25); }
 .result-icon { color: var(--gold-light); font-size: 25px; }
 .result-label { color: var(--gold); font-size: 9px; letter-spacing: .3em; }
 .result-panel h2 { margin: 16px 0 20px; font-size: clamp(22px, 3vw, 31px); letter-spacing: .06em; }
@@ -154,17 +147,14 @@ h1, h2 { margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 600; }
 .secondary-button:hover { background: var(--gold); color: var(--night); }
 .text-link { color: var(--muted); font-size: 11px; letter-spacing: .14em; text-decoration: none; }
 .text-link:hover { color: var(--gold-light); }
-footer { position: relative; z-index: 1; display: flex; padding: 55px max(24px, calc((100% - 1160px) / 2)); align-items: center; justify-content: space-between; gap: 30px; background: #070612; color: #6f6b7b; font-size: 11px; }
-.footer-brand { opacity: .75; }
-.footer-brand .brand-mark { width: 30px; height: 30px; font-size: 18px; }
-footer > p { font-family: 'Noto Serif TC', serif; }
 @media (max-width: 760px) {
+  main { height: auto; min-height: 100dvh; overflow-x: clip; overflow-y: auto; }
   .nav { width: calc(100% - 32px); padding-top: 20px; align-items: flex-start; gap: 20px; }
   .nav-actions { align-items: flex-end; flex-direction: column; gap: 10px; }
   .nav-link { font-size: 11px; }
-  .reading-section { padding: 70px 20px 85px; }
+  .reading-section { min-height: auto; padding: 70px 20px 85px; }
   .cards-grid { max-width: 320px; grid-template-columns: 1fr; gap: 55px; }
+  .cards-grid :deep(.card-slot) { width: min(100%, 260px); }
   .result-panel { padding: 38px 24px; }
-  footer { flex-direction: column; text-align: center; }
 }
 </style>
