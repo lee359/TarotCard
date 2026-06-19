@@ -28,26 +28,31 @@ const emit = defineEmits<{ flip: [] }>()
       :aria-label="revealed ? `${position}：${card?.name}` : `翻開${position}`"
       @click="emit('flip')"
     >
-      <span class="card-inner">
-        <span class="card-face card-back" aria-hidden="true">
-          <span class="corner-star">✦</span>
-          <span class="orbit orbit-one" />
-          <span class="orbit orbit-two" />
-          <span class="back-moon">☾</span>
-          <span class="back-title">LUNA ARCANA</span>
-          <span class="corner-star bottom">✦</span>
-        </span>
+      <span
+        class="card-motion animate__animated"
+        :class="{ 'animate__flipInY': revealed }"
+      >
+        <span class="card-inner">
+          <span class="card-face card-back" aria-hidden="true">
+            <span class="corner-star">✦</span>
+            <span class="orbit orbit-one" />
+            <span class="orbit orbit-two" />
+            <span class="back-moon">☾</span>
+            <span class="back-title">LUNA ARCANA</span>
+            <span class="corner-star bottom">✦</span>
+          </span>
 
-        <span class="card-face card-front">
-          <span class="card-number">{{ card?.number }}</span>
-          <span
-            class="card-symbol"
-            :class="{ 'animate__animated animate__zoomIn': revealed }"
-            aria-hidden="true"
-          >{{ card?.symbol }}</span>
-          <span class="card-name">{{ card?.name }}</span>
-          <span class="card-english">{{ card?.english }}</span>
-          <span class="card-keywords">{{ card?.keywords }}</span>
+          <span class="card-face card-front">
+            <span class="card-number">{{ card?.number }}</span>
+            <span
+              class="card-symbol"
+              :class="{ 'animate__animated animate__zoomIn': revealed }"
+              aria-hidden="true"
+            >{{ card?.symbol }}</span>
+            <span class="card-name">{{ card?.name }}</span>
+            <span class="card-english">{{ card?.english }}</span>
+            <span class="card-keywords">{{ card?.keywords }}</span>
+          </span>
         </span>
       </span>
     </button>
@@ -68,6 +73,9 @@ const emit = defineEmits<{ flip: [] }>()
 }
 .tarot-card:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 8px; }
 .tarot-card:disabled { cursor: default; }
+.card-motion {
+  display: block; width: 100%; height: 100%; --animate-duration: .9s; transform-origin: center;
+}
 .card-inner {
   position: relative; display: block; width: 100%; height: 100%; transition: transform .8s cubic-bezier(.2,.7,.2,1);
   transform-style: preserve-3d;
@@ -100,5 +108,13 @@ const emit = defineEmits<{ flip: [] }>()
 .card-keywords { margin-top: 15px; padding-top: 13px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; letter-spacing: .08em; }
 .hint { margin: 14px 0 0; color: #747080; font-size: 12px; letter-spacing: .12em; }
 .mini-meaning { margin: 14px auto 0; color: #c7c1cf; font-family: 'Noto Serif TC', serif; font-size: 13px; line-height: 1.8; }
-@media (hover: hover) { .tarot-card:not(:disabled):hover .card-inner { transform: translateY(-10px) rotateZ(1deg); } }
+@media (hover: hover) {
+  .tarot-card:not(:disabled):hover .card-motion {
+    animation-name: pulse;
+    animation-duration: 1.35s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+  }
+  .tarot-card:not(:disabled):hover .card-inner { transform: translateY(-10px) rotateZ(1deg); }
+}
 </style>
