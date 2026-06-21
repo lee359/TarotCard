@@ -18,7 +18,7 @@ const activeQuestion = computed<Question>(() => {
 })
 const revealed = ref([false, false, false])
 const drawnCards = ref<Card[]>([])
-const resultDismissed = ref(false)
+const resultVisible = ref(false)
 const positions = ['過去 · 根源', '現在 · 課題', '未來 · 指引']
 
 const deck: Card[] = [
@@ -50,7 +50,7 @@ function drawCards() {
   }
   drawnCards.value = shuffled.slice(0, 3)
   revealed.value = [false, false, false]
-  resultDismissed.value = false
+  resultVisible.value = false
   nextTick(() => window.scrollTo({ top: 0, behavior: 'smooth' }))
 }
 
@@ -80,12 +80,12 @@ onMounted(drawCards)
         <div class="heading-title-row">
           <h1>{{ allRevealed ? '牌已為你揭示' : '憑直覺，依序翻開三張牌' }}</h1>
           <button
-            v-if="allRevealed && resultDismissed"
+            v-if="allRevealed"
             class="view-result-button animate__animated animate__fadeInRight"
             type="button"
-            @click="resultDismissed = false"
+            @click="resultVisible = true"
           >
-            重新查看結果
+            查看結果
           </button>
         </div>
         <p>{{ allRevealed ? '不必急著定義答案，先感受哪一句話最靠近你。' : `你所詢問的主題：${activeQuestion}` }}</p>
@@ -110,14 +110,14 @@ onMounted(drawCards)
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
       >
-        <div v-if="allRevealed && !resultDismissed" class="result-overlay">
+        <div v-if="allRevealed && resultVisible" class="result-overlay">
           <article class="result-panel animate__animated animate__zoomIn">
             <button
               class="result-close"
               type="button"
               aria-label="關閉占卜結果"
               title="關閉"
-              @click="resultDismissed = true"
+              @click="resultVisible = false"
             >
               <span aria-hidden="true">&times;</span>
             </button>
