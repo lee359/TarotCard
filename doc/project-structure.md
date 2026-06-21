@@ -14,6 +14,7 @@ nuxt-web/
 │   │       └── animate.min.css    # Animate.css v4.1.1 官方動畫資源
 │   ├── pages/
 │   │   ├── about.vue              # 關於占卜的獨立頁面
+│   │   ├── author.vue             # 作者資料、主視覺與個人網站入口
 │   │   ├── index.vue              # 首頁主視覺與占卜主題選擇
 │   │   └── reading.vue            # 三張牌翻牌與解讀頁面
 │   ├── plugin/
@@ -22,6 +23,8 @@ nuxt-web/
 ├── doc/
 │   └── project-structure.md       # 本文件
 ├── public/
+│   ├── images/
+│   │   └── author-profile.png     # 作者頁主視覺圖片
 │   ├── favicon.ico                # 網站頁籤圖示
 │   └── robots.txt                 # 搜尋引擎爬蟲規則
 ├── .env                           # Firebase 等環境變數，不應提交敏感資料
@@ -59,6 +62,7 @@ Nuxt 檔案式路由的首頁，對應網站 `/` 路徑，負責：
 - 感情、事業、自我與今日指引的主題選擇
 - 將使用者導向 `/reading`
 - 首頁主視覺、導覽與網站入口
+- 提供前往 `/author` 與 `/about` 的導覽連結
 - 頁面的 SEO 標題與描述
 
 ### `app/pages/reading.vue`
@@ -74,6 +78,16 @@ Nuxt 檔案式路由的首頁，對應網站 `/` 路徑，負責：
 ### `app/pages/about.vue`
 
 獨立的「關於占卜」頁面，對應網站 `/about` 路徑，說明塔羅牌占卜的定位、使用提醒與三個閱讀原則。
+
+### `app/pages/author.vue`
+
+獨立的「關於作者」頁面，對應網站 `/author` 路徑，負責：
+
+- 顯示作者姓名「李東恩」及英文名「LI, DONG-EN」
+- 顯示中原大學電機工程學系、Taiwan 與 2022－在學等作者資料
+- 使用 `/images/author-profile.png` 作為作者主視覺
+- 提供前往 <https://web-project-seven-lyart.vercel.app/> 的個人網站連結
+- 以桌面雙欄與行動裝置上下排列呈現響應式版面
 
 ### `app/components/TarotCard.vue`
 
@@ -93,7 +107,7 @@ Nuxt 的主要設定檔，目前包含相容日期、開發工具、繁體中文
 
 ### `public/`
 
-放置不需經過 Vite 處理的公開靜態檔案。此目錄內的檔案會直接對應網站根路徑，例如 `public/favicon.ico` 可透過 `/favicon.ico` 存取。
+放置不需經過 Vite 處理的公開靜態檔案。此目錄內的檔案會直接對應網站根路徑，例如 `public/favicon.ico` 可透過 `/favicon.ico` 存取，`public/images/author-profile.png` 則可透過 `/images/author-profile.png` 存取。
 
 ## 執行方式
 
@@ -132,6 +146,12 @@ npm run preview
     └── Nuxt app/app.vue
         └── <NuxtPage />
             └── app/pages/about.vue
+
+瀏覽器請求 /author
+    └── Nuxt app/app.vue
+        └── <NuxtPage />
+            └── app/pages/author.vue
+                └── public/images/author-profile.png
 
 瀏覽器請求 /reading
     └── Nuxt app/app.vue
