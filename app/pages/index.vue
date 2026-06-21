@@ -62,11 +62,8 @@ function startReading() {
       </div>
 
       <footer>
-        <NuxtLink class="footer-brand" to="/">
-          <span class="footer-mark">☾</span>
-          <span>月之秘語<small>LUNA ARCANA</small></span>
-        </NuxtLink>
         <p>願你在每一次提問裡，更靠近真實的自己。</p>
+        <NuxtLink class="footer-admin-link" to="/admin">管理員登入</NuxtLink>
         <small>© {{ new Date().getFullYear() }} LUNA ARCANA · 僅供自我探索與娛樂</small>
       </footer>
     </section>
@@ -106,12 +103,12 @@ h1 { margin: 0; font-family: 'Noto Serif TC', serif; font-size: clamp(30px, 3.7v
 .primary-button { display: flex; min-width: 230px; margin: auto; padding: clamp(11px, 2vh, 14px) 22px; align-items: center; justify-content: center; gap: 55px; border: 1px solid var(--gold); background: var(--gold); color: #151129; cursor: pointer; letter-spacing: .14em; transition: .25s ease; }
 .primary-button:hover { background: var(--gold-light); box-shadow: 0 0 30px rgba(212,179,106,.2); transform: translateY(-2px); }
 .question-panel > small { display: block; margin-top: 10px; color: #6f6b7b; font-size: 10px; letter-spacing: .06em; }
-footer { position: relative; z-index: 1; display: grid; width: min(1080px, calc(100% - 48px)); height: var(--edge-height); margin: 0 auto; padding: 0; grid-template-columns: auto 1fr auto; gap: 20px; align-items: center; border-top: 1px solid rgba(212,179,106,.1); color: #6f6b7b; font-size: 10px; }
-.footer-brand { display: flex; align-items: center; gap: 10px; color: var(--ink); font-family: 'Noto Serif TC', serif; font-size: 12px; letter-spacing: .12em; text-decoration: none; opacity: .8; }
-.footer-brand small { display: block; margin-top: 2px; color: var(--gold); font-family: 'DM Sans', sans-serif; font-size: 6px; letter-spacing: .22em; }
-.footer-mark { display: grid; width: 28px; height: 28px; place-items: center; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold-light); font-family: Georgia, serif; font-size: 17px; }
-footer p { margin: 0; text-align: center; font-family: 'Noto Serif TC', serif; }
-footer > small { text-align: right; }
+footer { position: relative; z-index: 1; display: grid; width: min(1080px, calc(100% - 48px)); height: var(--edge-height); margin: 0 auto; padding: 0; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center; border-top: 1px solid rgba(212,179,106,.1); color: #6f6b7b; font-size: 10px; }
+footer p { margin: 0; font-family: 'Noto Serif TC', serif; }
+.footer-admin-link { color: var(--muted); font-size: 12px; letter-spacing: .15em; text-decoration: none; transition: color .2s ease; }
+.footer-admin-link:hover { color: var(--gold-light); }
+.footer-admin-link:focus-visible { outline: 1px solid var(--gold-light); outline-offset: 5px; }
+footer > small { justify-self: end; text-align: right; }
 @media (max-width: 760px) {
   .hero { min-height: auto; }
   .nav { width: calc(100% - 32px); padding-top: 20px; }
@@ -126,7 +123,7 @@ footer > small { text-align: right; }
   .question-tabs button:nth-child(2) { border-right: 0; }
   .question-tabs button:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
   footer { width: calc(100% - 32px); grid-template-columns: 1fr; gap: 4px; text-align: center; }
-  .footer-brand { justify-content: center; }
-  footer > small { text-align: center; }
+  .footer-admin-link { padding: 4px 0; font-size: 11px; }
+  footer > small { justify-self: center; text-align: center; }
 }
 </style>
