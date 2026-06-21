@@ -28,7 +28,10 @@ function startReading() {
           <span class="brand-mark">☾</span>
           <span>月之秘語<small>LUNA ARCANA</small></span>
         </NuxtLink>
-        <NuxtLink class="nav-link" to="/about">關於占卜</NuxtLink>
+        <div class="nav-actions">
+          <NuxtLink class="nav-link" to="/author">關於作者</NuxtLink>
+          <NuxtLink class="nav-link" to="/about">關於占卜</NuxtLink>
+        </div>
       </nav>
 
       <div id="top" class="hero-content">
@@ -80,6 +83,7 @@ main { height: 100dvh; overflow: clip; background: var(--night); }
 .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); font-family: 'Noto Serif TC', serif; font-size: 16px; letter-spacing: .14em; text-decoration: none; }
 .brand-mark { display: grid; width: 37px; height: 37px; place-items: center; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold-light); font-family: Georgia, serif; font-size: 22px; }
 .brand small { display: block; margin-top: 3px; color: var(--gold); font-family: 'DM Sans', sans-serif; font-size: 7px; letter-spacing: .26em; }
+.nav-actions { display: flex; align-items: center; gap: 24px; }
 .nav-link { color: var(--muted); font-size: 12px; letter-spacing: .15em; text-decoration: none; }
 .nav-link:hover { color: var(--gold-light); }
 .hero-content { display: flex; width: min(740px, calc(100% - 40px)); margin: 0 auto; padding: clamp(6px, 1.5vh, 14px) 0 clamp(10px, 2vh, 18px); align-items: center; min-height: 0; flex-direction: column; justify-content: center; text-align: center; }
@@ -111,6 +115,7 @@ footer > small { text-align: right; }
 @media (max-width: 760px) {
   .hero { min-height: auto; }
   .nav { width: calc(100% - 32px); padding-top: 20px; }
+  .nav-actions { gap: 14px; }
   .nav-link { font-size: 11px; }
   .hero-content { justify-content: center; padding-top: 20px; }
   .moon { width: 95px; height: 95px; font-size: 62px; }

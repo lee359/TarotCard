@@ -5,6 +5,8 @@ export default defineNuxtConfig({
   css: ['~/assets/css/animate.min.css'],
   app: {
     head: {
+      title: '月之秘語 | 塔羅占卜',
+      titleTemplate: () => '月之秘語 | 塔羅占卜',
       htmlAttrs: { lang: 'zh-Hant' },
       meta: [
         { name: 'theme-color', content: '#090817' },

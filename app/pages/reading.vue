@@ -18,6 +18,7 @@ const activeQuestion = computed<Question>(() => {
 })
 const revealed = ref([false, false, false])
 const drawnCards = ref<Card[]>([])
+const resultDismissed = ref(false)
 const positions = ['過去 · 根源', '現在 · 課題', '未來 · 指引']
 
 const deck: Card[] = [
@@ -49,6 +50,7 @@ function drawCards() {
   }
   drawnCards.value = shuffled.slice(0, 3)
   revealed.value = [false, false, false]
+  resultDismissed.value = false
   nextTick(() => window.scrollTo({ top: 0, behavior: 'smooth' }))
 }
 
@@ -75,7 +77,17 @@ onMounted(drawCards)
     <section id="reading" class="reading-section animate__animated animate__fadeIn">
       <div class="section-heading animate__animated animate__fadeInUp">
         <p class="eyebrow"><span /> YOUR THREE-CARD SPREAD <span /></p>
-        <h1>{{ allRevealed ? '牌已為你揭示' : '憑直覺，依序翻開三張牌' }}</h1>
+        <div class="heading-title-row">
+          <h1>{{ allRevealed ? '牌已為你揭示' : '憑直覺，依序翻開三張牌' }}</h1>
+          <button
+            v-if="allRevealed && resultDismissed"
+            class="view-result-button animate__animated animate__fadeInRight"
+            type="button"
+            @click="resultDismissed = false"
+          >
+            重新查看結果
+          </button>
+        </div>
         <p>{{ allRevealed ? '不必急著定義答案，先感受哪一句話最靠近你。' : `你所詢問的主題：${activeQuestion}` }}</p>
       </div>
 
@@ -87,7 +99,7 @@ onMounted(drawCards)
           :style="{ '--card-delay': `${index * 180}ms` }"
           :position="position"
           :card="drawnCards[index]"
-          :revealed="revealed[index]"
+          :revealed="revealed[index] ?? false"
           :disabled="index > 0 && !revealed[index - 1]"
           @flip="revealCard(index)"
         />
@@ -98,8 +110,17 @@ onMounted(drawCards)
         enter-active-class="animate__animated animate__fadeIn"
         leave-active-class="animate__animated animate__fadeOut"
       >
-        <div v-if="allRevealed" class="result-overlay">
+        <div v-if="allRevealed && !resultDismissed" class="result-overlay">
           <article class="result-panel animate__animated animate__zoomIn">
+            <button
+              class="result-close"
+              type="button"
+              aria-label="關閉占卜結果"
+              title="關閉"
+              @click="resultDismissed = true"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
           <span class="result-icon">✦</span>
           <p class="result-label">給你的整體訊息</p>
           <h2>{{ readingTitle }}</h2>
@@ -128,26 +149,46 @@ main::before { content: ''; position: fixed; inset: 0; pointer-events: none; opa
 .nav-link { color: var(--muted); font-size: 12px; letter-spacing: .15em; text-decoration: none; }
 .nav-link:hover { color: var(--gold-light); }
 .reading-section { position: relative; z-index: 1; display: grid; min-height: 0; padding: clamp(4px, 1vh, 10px) 30px clamp(14px, 2.4vh, 24px); grid-template-rows: auto minmax(0, 1fr) auto; align-items: start; }
-.section-heading { max-width: 700px; margin: 0 auto; padding-top: clamp(8px, 2vh, 18px); text-align: center; }
+.section-heading { width: min(100%, 900px); margin: 0 auto; padding-top: clamp(8px, 2vh, 18px); text-align: center; }
 .eyebrow { display: flex; align-items: center; justify-content: center; gap: 13px; color: var(--gold); font-size: 9px; letter-spacing: .32em; }
 .eyebrow span { width: 34px; height: 1px; background: var(--gold); opacity: .5; }
 h1, h2 { margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 600; }
-.section-heading h1 { margin-top: clamp(6px, 1.2vh, 10px); font-size: clamp(25px, 3.2vw, 36px); letter-spacing: .08em; line-height: 1.18; }
+.heading-title-row {
+  display: grid; width: min(100%, 820px); margin: clamp(6px, 1.2vh, 10px) auto 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(28px, 5vw, 62px); align-items: center;
+}
+.section-heading h1 { grid-row: 1; grid-column: 1 / -1; font-size: clamp(25px, 3.2vw, 36px); letter-spacing: .08em; line-height: 1.18; }
 .section-heading > p:last-child { margin-top: clamp(6px, 1.2vh, 10px); color: var(--muted); font-family: 'Noto Serif TC', serif; font-size: 13px; }
 .cards-grid { display: grid; width: min(100%, 820px); margin: clamp(18px, 3vh, 28px) auto 0; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(28px, 5vw, 62px); justify-items: center; align-items: start; }
 .cards-grid :deep(.card-slot) { width: min(100%, clamp(185px, 24vh, 230px)); }
 .tarot-stagger { animation-delay: var(--card-delay); }
 .loading { margin: 58px 0 0; color: var(--muted); text-align: center; letter-spacing: .12em; }
+.view-result-button {
+  z-index: 1; min-width: 134px; padding: 10px 18px; grid-row: 1; grid-column: 3; justify-self: center;
+  border: 1px solid var(--gold); background: rgba(20, 17, 42, .88); color: var(--gold-light);
+  cursor: pointer; font-family: 'Noto Serif TC', serif; font-size: 13px; letter-spacing: .14em;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .22); transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+.view-result-button:hover { background: var(--gold); color: var(--night); transform: translateY(-2px); }
+.view-result-button:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 3px; }
 .result-overlay {
   position: fixed; inset: 0; z-index: 20; display: grid; padding: clamp(24px, 5vw, 52px);
   place-items: center; background: rgba(10, 9, 25, .72); backdrop-filter: blur(8px);
 }
 .result-panel {
-  width: min(720px, 100%); max-height: min(78dvh, 620px); overflow-y: auto;
+  position: relative; width: min(720px, 100%); max-height: min(78dvh, 620px); overflow-y: auto;
   padding: clamp(26px, 4vh, 40px) clamp(24px, 4vw, 44px); border: 1px solid var(--gold);
   background: linear-gradient(135deg, rgba(35,28,64,.95), rgba(15,13,33,.98));
   text-align: center; box-shadow: 0 30px 90px rgba(0,0,0,.45); --animate-duration: .65s;
 }
+.result-close {
+  position: absolute; top: 12px; right: 12px; display: grid; width: 38px; height: 38px;
+  padding: 0; place-items: center; border: 1px solid transparent; background: transparent;
+  color: var(--muted); cursor: pointer; font-family: Arial, sans-serif; font-size: 30px;
+  line-height: 1; transition: color .2s ease, border-color .2s ease, background .2s ease;
+}
+.result-close:hover { border-color: rgba(240,217,156,.45); background: rgba(240,217,156,.08); color: var(--gold-light); }
+.result-close:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 2px; }
 .result-icon { color: var(--gold-light); font-size: 25px; }
 .result-label { color: var(--gold); font-size: 9px; letter-spacing: .3em; }
 .result-panel h2 { margin: 16px 0 20px; font-size: clamp(22px, 3vw, 31px); letter-spacing: .06em; }
@@ -164,6 +205,7 @@ h1, h2 { margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 600; }
   .nav-actions { align-items: flex-end; flex-direction: column; gap: 10px; }
   .nav-link { font-size: 11px; }
   .reading-section { min-height: auto; padding: 70px 20px 85px; }
+  .heading-title-row { flex-direction: column; gap: 14px; }
   .cards-grid { max-width: 320px; grid-template-columns: 1fr; gap: 55px; }
   .cards-grid :deep(.card-slot) { width: min(100%, 260px); }
   .result-overlay { padding: 18px; align-items: end; }
