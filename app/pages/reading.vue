@@ -20,7 +20,15 @@ const activeQuestion = computed<Question>(() => {
 const revealed = ref([false, false, false])
 const drawnCards = ref<Card[]>([])
 const resultVisible = ref(false)
+const clearFeedbackSignal = ref(0)
 const positions = ['過去 · 根源', '現在 · 課題', '未來 · 指引']
+const lockedMessages = [
+  '', 
+  `要了解現在
+得先回想過去`, 
+  `欲知曉未來
+要先理解現在`
+];
 
 const deck = ref<Card[]>([
   { number: '0', name: '愚者', english: 'THE FOOL', symbol: '☼', keywords: '啟程 · 自由 · 信任', meaning: '保持初衷。未知不是阻礙，而是邀請你輕盈前行的空間。' },
@@ -72,6 +80,7 @@ async function loadDeck() {
 }
 
 function revealCard(index: number) {
+  if (index <= 1) clearFeedbackSignal.value += 1
   revealed.value[index] = true
 }
 
@@ -118,6 +127,8 @@ onMounted(loadDeck)
           :card="drawnCards[index]"
           :revealed="revealed[index] ?? false"
           :disabled="index > 0 && !revealed[index - 1]"
+          :locked-message="lockedMessages[index]"
+          :clear-feedback-signal="clearFeedbackSignal"
           @flip="revealCard(index)"
         />
       </div>
