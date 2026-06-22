@@ -1,0 +1,36 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.active == true;
+    }
+
+    match /admins/{userId} {
+      allow read: if signedIn() && request.auth.uid == userId;
+      allow write: if false;
+    }
+
+    match /tarotCards/{cardId} {
+      allow read: if true;
+      allow create, update: if isAdmin()
+        && request.resource.data.number is string
+        && request.resource.data.name is string
+        && request.resource.data.english is string
+        && request.resource.data.symbol is string
+        && request.resource.data.keywords is string
+        && request.resource.data.meaning is string;
+      allow delete: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
