@@ -13,9 +13,56 @@ const props = defineProps<{
   position: string
   revealed: boolean
   disabled?: boolean
+  lockedMessage?: string
+  clearFeedbackSignal?: number
 }>()
 
 const emit = defineEmits<{ flip: [] }>()
+const feedbackVisible = ref(false)
+const shakeActive = ref(false)
+let feedbackTimer: ReturnType<typeof setTimeout> | undefined
+let shakeTimer: ReturnType<typeof setTimeout> | undefined
+
+function showLockedFeedback() {
+  clearTimeout(feedbackTimer)
+  clearTimeout(shakeTimer)
+  feedbackVisible.value = true
+  shakeActive.value = false
+
+  requestAnimationFrame(() => {
+    shakeActive.value = true
+    shakeTimer = setTimeout(() => {
+      shakeActive.value = false
+    }, 650)
+  })
+
+  feedbackTimer = setTimeout(() => {
+    feedbackVisible.value = false
+  }, 3000)
+}
+
+function handleCardClick() {
+  if (props.revealed) return
+
+  if (props.disabled) {
+    showLockedFeedback()
+    return
+  }
+
+  emit('flip')
+}
+
+onBeforeUnmount(() => {
+  clearTimeout(feedbackTimer)
+  clearTimeout(shakeTimer)
+})
+
+watch(() => props.clearFeedbackSignal, () => {
+  clearTimeout(feedbackTimer)
+  clearTimeout(shakeTimer)
+  shakeActive.value = false
+  feedbackVisible.value = false
+})
 </script>
 
 <template>
@@ -23,14 +70,14 @@ const emit = defineEmits<{ flip: [] }>()
     <span class="position">{{ position }}</span>
     <button
       class="tarot-card"
-      :class="{ revealed }"
-      :disabled="disabled || revealed"
-      :aria-label="revealed ? `${position}：${card?.name}` : `翻開${position}`"
-      @click="emit('flip')"
+      :class="{ revealed, locked: disabled && !revealed }"
+      :disabled="revealed"
+      :aria-label="revealed ? `${position}：${card?.name}` : disabled ? `${position}尚未能翻開，點擊查看順序提示` : `翻開${position}`"
+      @click="handleCardClick"
     >
       <span
         class="card-motion animate__animated"
-        :class="{ 'animate__flipInY': revealed }"
+        :class="{ 'animate__flipInY': revealed, 'animate__headShake': shakeActive }"
       >
         <span class="card-inner">
           <span class="card-face card-back" aria-hidden="true">
@@ -55,6 +102,12 @@ const emit = defineEmits<{ flip: [] }>()
           </span>
         </span>
       </span>
+
+      <Transition name="misclick-fade">
+        <span v-if="feedbackVisible && lockedMessage" class="misclick-message" role="status">
+          {{ lockedMessage }}
+        </span>
+      </Transition>
     </button>
     <p v-if="revealed" class="mini-meaning">{{ card?.meaning }}</p>
     <p v-else class="hint">點擊翻牌</p>
@@ -68,14 +121,15 @@ const emit = defineEmits<{ flip: [] }>()
   letter-spacing: .28em; text-transform: uppercase;
 }
 .tarot-card {
-  width: 100%; aspect-ratio: 2 / 3.2; padding: 0; border: 0; background: transparent;
+  position: relative; width: 100%; aspect-ratio: 2 / 3.2; padding: 0; border: 0; background: transparent;
   cursor: pointer; perspective: 1200px; border-radius: 8px;
 }
 .tarot-card:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 8px; }
-.tarot-card:disabled { cursor: default; }
+.tarot-card:disabled, .tarot-card.locked { cursor: pointer; }
 .card-motion {
   display: block; width: 100%; height: 100%; --animate-duration: .9s; transform-origin: center;
 }
+.locked .card-motion.animate__headShake { --animate-duration: .55s; }
 .card-inner {
   position: relative; display: block; width: 100%; height: 100%; transition: transform .8s cubic-bezier(.2,.7,.2,1);
   transform-style: preserve-3d;
@@ -106,6 +160,17 @@ const emit = defineEmits<{ flip: [] }>()
 .card-name { font-family: 'Noto Serif TC', serif; font-size: clamp(20px, 2.4vw, 27px); font-weight: 600; letter-spacing: .16em; }
 .card-english { margin-top: 5px; color: var(--gold); font-size: 9px; letter-spacing: .24em; }
 .card-keywords { margin-top: 15px; padding-top: 13px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; letter-spacing: .08em; }
+.misclick-message {
+  position: absolute; inset: 50% 16px auto; z-index: 4; display: block; padding: 14px 12px;
+  border-top: 1px solid rgba(240,217,156,.5); border-bottom: 1px solid rgba(240,217,156,.5);
+  background: rgba(9,8,23,.9); color: var(--gold-light); font-family: 'Noto Serif TC', serif;
+  font-size: clamp(12px, 1.4vw, 14px); letter-spacing: .06em; line-height: 1.7; white-space: pre-line;
+  transform: translateY(-50%);
+  box-shadow: 0 10px 32px rgba(0,0,0,.38); pointer-events: none;
+}
+.misclick-fade-enter-active { transition: opacity .2s ease; }
+.misclick-fade-leave-active { transition: opacity 1.15s ease; }
+.misclick-fade-enter-from, .misclick-fade-leave-to { opacity: 0; }
 .hint { margin: 14px 0 0; color: #747080; font-size: 12px; letter-spacing: .12em; }
 .mini-meaning { margin: 14px auto 0; color: #c7c1cf; font-family: 'Noto Serif TC', serif; font-size: 13px; line-height: 1.8; }
 @media (hover: hover) {
@@ -116,5 +181,10 @@ const emit = defineEmits<{ flip: [] }>()
     animation-timing-function: ease-in-out;
   }
   .tarot-card:not(:disabled):hover .card-inner { transform: translateY(-10px) rotateZ(1deg); }
+  .tarot-card.locked:hover .card-motion.animate__headShake {
+    animation-name: headShake;
+    animation-duration: .55s;
+    animation-iteration-count: 1;
+  }
 }
 </style>
