@@ -2,11 +2,28 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+
+  runtimeConfig: {
+    public: {
+      firebaseApiKey: '',
+      firebaseAuthDomain: '',
+      firebaseProjectId: '',
+      firebaseStorageBucket: '',
+      firebaseMessagingSenderId: '',
+      firebaseAppId: '',
+      firebaseMeasurementId: ''
+    }
+  },
+
+  routeRules: {
+    '/admin': { ssr: false }
+  },
+
   css: ['~/assets/css/animate.min.css'],
   app: {
     head: {
       title: '月之秘語 | 塔羅占卜',
-      titleTemplate: () => '月之秘語 | 塔羅占卜',
+      titleTemplate: '月之秘語 | 塔羅占卜',
       htmlAttrs: { lang: 'zh-Hant' },
       meta: [
         { name: 'theme-color', content: '#090817' },
@@ -17,5 +34,8 @@ export default defineNuxtConfig({
         { rel: 'shortcut icon', type: 'image/x-icon', href: '/favicon.ico' }
       ]
     }
-  }
+  },
+  
 })
+
+

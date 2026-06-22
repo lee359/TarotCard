@@ -11,6 +11,12 @@ useSeoMeta({
 
 const questions: Question[] = ['感情', '事業', '自我', '今日指引']
 const activeQuestion = ref<Question>('感情')
+const adminLoginOpen = ref(false)
+const route = useRoute()
+const nuxtApp = useNuxtApp()
+const adminLoginMessage = computed(() => route.query.adminError === 'unauthorized'
+  ? '此帳號沒有管理員權限。'
+  : '')
 
 function startReading() {
   return navigateTo({
@@ -18,6 +24,20 @@ function startReading() {
     query: { topic: activeQuestion.value }
   })
 }
+
+function openAdminLogin() {
+  if (nuxtApp.$firebaseAuth?.currentUser) {
+    return navigateTo('/admin')
+  }
+
+  adminLoginOpen.value = true
+}
+
+onMounted(() => {
+  if (route.query.adminLogin === '1') {
+    adminLoginOpen.value = true
+  }
+})
 </script>
 
 <template>
@@ -62,12 +82,17 @@ function startReading() {
       </div>
 
       <footer>
+        <button class="footer-admin-link" type="button" @click="openAdminLogin">管理員登入</button>
         <p>願你在每一次提問裡，更靠近真實的自己。</p>
-        <NuxtLink class="footer-admin-link" to="/admin">管理員登入</NuxtLink>
         <small>© {{ new Date().getFullYear() }} LUNA ARCANA · 僅供自我探索與娛樂</small>
       </footer>
     </section>
 
+    <AdminLoginModal
+      v-if="adminLoginOpen"
+      v-model="adminLoginOpen"
+      :initial-message="adminLoginMessage"
+    />
   </main>
 </template>
 
@@ -105,7 +130,7 @@ h1 { margin: 0; font-family: 'Noto Serif TC', serif; font-size: clamp(30px, 3.7v
 .question-panel > small { display: block; margin-top: 10px; color: #6f6b7b; font-size: 10px; letter-spacing: .06em; }
 footer { position: relative; z-index: 1; display: grid; width: min(1080px, calc(100% - 48px)); height: var(--edge-height); margin: 0 auto; padding: 0; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center; border-top: 1px solid rgba(212,179,106,.1); color: #6f6b7b; font-size: 10px; }
 footer p { margin: 0; font-family: 'Noto Serif TC', serif; }
-.footer-admin-link { color: var(--muted); font-size: 12px; letter-spacing: .15em; text-decoration: none; transition: color .2s ease; }
+.footer-admin-link { justify-self: start; padding: 0; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 12px; letter-spacing: .15em; text-decoration: none; transition: color .2s ease; }
 .footer-admin-link:hover { color: var(--gold-light); }
 .footer-admin-link:focus-visible { outline: 1px solid var(--gold-light); outline-offset: 5px; }
 footer > small { justify-self: end; text-align: right; }
