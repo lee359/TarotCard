@@ -113,8 +113,21 @@ main { height: 100dvh; overflow: clip; background: var(--night); }
 .eyebrow span { width: 34px; height: 1px; background: var(--gold); opacity: .5; }
 .moon { position: relative; display: grid; width: clamp(62px, 9vh, 86px); height: clamp(62px, 9vh, 86px); margin: clamp(4px, 1vh, 8px) 0 3px; place-items: center; border: 1px solid rgba(212,179,106,.18); border-radius: 50%; color: var(--gold-light); font: clamp(42px, 6.2vh, 56px) Georgia, serif; filter: drop-shadow(0 0 28px rgba(240,217,156,.18)); }
 .moon > span { display: block; }
-.moon::before, .moon::after { content: ''; position: absolute; width: clamp(96px, 15vh, 132px); height: clamp(28px, 4.5vh, 38px); border: 1px solid rgba(212,179,106,.25); border-radius: 50%; transform: rotate(24deg); }
-.moon::after { transform: rotate(-24deg); }
+.moon::before, .moon::after {
+  content: ''; position: absolute; top: 50%; left: 50%; width: clamp(96px, 15vh, 132px); height: clamp(28px, 4.5vh, 38px);
+  border: 1px solid rgba(212,179,106,.28); border-radius: 50%; transform-origin: center;
+  box-shadow: 0 0 14px rgba(212,179,106,.06); pointer-events: none;
+}
+.moon::before { animation: moon-orbit-sway-one 4.8s ease-in-out infinite; }
+.moon::after { animation: moon-orbit-sway-two 5.6s ease-in-out -1.4s infinite; }
+@keyframes moon-orbit-sway-one {
+  0%, 100% { transform: translate(-50%, -50%) rotate(18deg) scaleX(.96); }
+  50% { transform: translate(-50%, -50%) rotate(39deg) scaleX(1.04); }
+}
+@keyframes moon-orbit-sway-two {
+  0%, 100% { transform: translate(-50%, -50%) rotate(-20deg) scaleX(1.03); }
+  50% { transform: translate(-50%, -50%) rotate(-42deg) scaleX(.95); }
+}
 h1 { margin: 0; font-family: 'Noto Serif TC', serif; font-size: clamp(30px, 3.7vw, 48px); font-weight: 600; letter-spacing: .08em; line-height: 1.16; }
 .lead { margin: clamp(8px, 1.4vh, 12px) 0 0; color: var(--muted); font-family: 'Noto Serif TC', serif; font-size: clamp(12px, 1.4vh, 14px); line-height: 1.65; letter-spacing: .06em; }
 .hero-title { --animate-delay: .15s; animation-delay: var(--animate-delay); }
