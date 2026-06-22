@@ -29,6 +29,18 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    match /siteStats/visitors {
+      allow read: if isAdmin();
+      allow create: if request.resource.data.keys().hasOnly(['count', 'lastVisitedAt'])
+        && request.resource.data.count == 1
+        && request.resource.data.lastVisitedAt == request.time;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['count', 'lastVisitedAt'])
+        && request.resource.data.count == resource.data.count + 1
+        && request.resource.data.lastVisitedAt == request.time;
+      allow delete: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

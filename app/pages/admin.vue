@@ -5,6 +5,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   getDocs,
   serverTimestamp,
   updateDoc,
@@ -24,7 +25,9 @@ const config = useRuntimeConfig()
 const { $firebaseAuth, $firestore } = useNuxtApp()
 const signingOut = ref(false)
 const adminEmail = ref('已驗證帳號')
-const firebaseConnected = ref(false)
+const visitorCount = ref<number | null>(null)
+const lastVisitedAt = ref('尚無造訪紀錄')
+const loadingVisitorStats = ref(true)
 const cards = ref<TarotCardData[]>([])
 const loadingCards = ref(true)
 const saving = ref(false)
@@ -101,6 +104,32 @@ async function loadCards() {
   }
 }
 
+async function loadVisitorStats() {
+  if (!$firestore) {
+    loadingVisitorStats.value = false
+    return
+  }
+
+  try {
+    const snapshot = await getDoc(doc($firestore, 'siteStats', 'visitors'))
+    if (!snapshot.exists()) return
+
+    const data = snapshot.data()
+    visitorCount.value = typeof data.count === 'number' ? data.count : 0
+    lastVisitedAt.value = data.lastVisitedAt?.toDate
+      ? new Intl.DateTimeFormat('zh-TW', {
+          dateStyle: 'medium',
+          timeStyle: 'short'
+        }).format(data.lastVisitedAt.toDate())
+      : '等待伺服器更新時間'
+  } catch (error) {
+    console.error('[Firestore] Unable to load visitor statistics.', error)
+    lastVisitedAt.value = '統計資料讀取失敗'
+  } finally {
+    loadingVisitorStats.value = false
+  }
+}
+
 async function saveCard() {
   if (!$firestore) return
 
@@ -173,8 +202,7 @@ async function importDefaultDeck() {
 
 onMounted(async () => {
   adminEmail.value = $firebaseAuth?.currentUser?.email ?? '已驗證帳號'
-  firebaseConnected.value = Boolean($firestore)
-  await loadCards()
+  await Promise.all([loadCards(), loadVisitorStats()])
 })
 </script>
 
@@ -201,15 +229,11 @@ onMounted(async () => {
       </header>
 
       <div class="status-grid">
-        <article>
-          <span class="status-dot" aria-hidden="true" />
-          <p>Firebase Authentication</p>
-          <strong>已驗證</strong>
-        </article>
-        <article>
-          <span class="status-dot" aria-hidden="true" />
-          <p>Cloud Firestore</p>
-          <strong>{{ firebaseConnected ? '已連線' : '連線中' }}</strong>
+        <article class="visitor-stat">
+          <span class="stat-symbol" aria-hidden="true">◎</span>
+          <p>訪客瀏覽次數統計</p>
+          <strong>{{ loadingVisitorStats ? '讀取中…' : (visitorCount ?? 0).toLocaleString('zh-TW') }}</strong>
+          <small>最後造訪：{{ lastVisitedAt }}</small>
         </article>
       </div>
 
@@ -295,11 +319,13 @@ onMounted(async () => {
 h1, h2 { margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 600; }
 h1 { margin-top: 14px; font-size: clamp(38px, 5vw, 58px); letter-spacing: .08em; }
 header > p:last-child { margin: 10px 0 0; color: var(--muted); font-size: 12px; letter-spacing: .06em; }
-.status-grid { display: grid; margin-top: 42px; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.status-grid { display: grid; margin-top: 42px; grid-template-columns: minmax(0, 1fr); }
 .status-grid article { position: relative; min-height: 130px; padding: 24px; border: 1px solid var(--line); background: rgba(20,17,42,.72); }
-.status-dot { position: absolute; top: 24px; right: 24px; width: 8px; height: 8px; border-radius: 50%; background: #8fd3a8; box-shadow: 0 0 13px #8fd3a8; }
+.stat-symbol { position: absolute; top: 20px; right: 22px; color: var(--gold); font-size: 20px; }
 .status-grid p { margin: 0; color: var(--muted); font-size: 11px; letter-spacing: .1em; }
 .status-grid strong { display: block; margin-top: 24px; color: var(--gold-light); font-family: 'Noto Serif TC', serif; font-size: 20px; font-weight: 500; letter-spacing: .1em; }
+.visitor-stat strong { margin-top: 14px; font-family: 'DM Sans', sans-serif; font-size: 30px; letter-spacing: 0; }
+.visitor-stat small { display: block; margin-top: 6px; color: var(--muted); font-size: 9px; line-height: 1.5; letter-spacing: .04em; }
 .firestore-section { display: flex; margin-top: 20px; padding: 28px 30px; align-items: center; justify-content: space-between; gap: 30px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .section-label { margin: 0 0 8px; color: var(--gold); font-size: 9px; letter-spacing: .25em; }
 .firestore-section h2 { font-size: 24px; letter-spacing: .08em; }
