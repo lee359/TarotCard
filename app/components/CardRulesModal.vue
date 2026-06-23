@@ -72,7 +72,10 @@ onBeforeUnmount(() => {
             </section>
           </div>
 
-          <footer>塔羅結果僅供自我探索與娛樂，不取代任何專業建議。</footer>
+          <footer role="note">
+            <span aria-hidden="true">⚠</span>
+            <strong>塔羅結果僅供自我探索與娛樂，不取代任何專業建議。</strong>
+          </footer>
         </article>
       </div>
     </Transition>
@@ -96,7 +99,9 @@ header > p:last-child { margin: 10px 0 0; color: var(--muted); font-family: 'Not
 .rules-content b { color: var(--gold); font-size: 10px; font-weight: 500; letter-spacing: .12em; }
 .rules-content h3 { margin: 0; font-family: 'Noto Serif TC', serif; font-size: 15px; font-weight: 600; letter-spacing: .08em; }
 .rules-content p { margin: 8px 0 0; color: #b8b1c0; font-size: 12px; line-height: 1.8; }
-footer { position: relative; margin-top: 24px; color: #7d7788; font-size: 10px; letter-spacing: .06em; text-align: center; }
+footer { position: relative; display: flex; margin-top: 24px; padding: 13px 16px; align-items: center; justify-content: center; gap: 10px; border: 1px solid rgba(212,179,106,.48); background: rgba(212,179,106,.1); color: var(--gold-light); font-size: 11px; line-height: 1.65; letter-spacing: .06em; text-align: center; box-shadow: inset 0 0 24px rgba(212,179,106,.04); }
+footer span { color: var(--gold); font-size: 16px; }
+footer strong { font-weight: 500; }
 @media (max-width: 620px) {
   .rules-overlay { padding: 12px; align-items: end; }
   .rules-dialog { max-height: 88dvh; padding: 34px 20px 28px; }
