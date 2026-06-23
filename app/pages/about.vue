@@ -43,10 +43,6 @@ useSeoMeta({
     </section>
 
     <footer>
-      <NuxtLink class="footer-brand" to="/">
-        <span class="footer-mark">☾</span>
-        <span>月之秘語<small>LUNA ARCANA</small></span>
-      </NuxtLink>
       <p>願你在每一次提問裡，更靠近真實的自己。</p>
       <small>© {{ new Date().getFullYear() }} LUNA ARCANA · 僅供自我探索與娛樂</small>
     </footer>
@@ -278,15 +274,6 @@ footer {
   letter-spacing: .12em;
   text-decoration: none;
   opacity: .8;
-}
-
-.footer-brand small {
-  display: block;
-  margin-top: 2px;
-  color: var(--gold);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 6px;
-  letter-spacing: .22em;
 }
 
 .footer-mark {

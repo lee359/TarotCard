@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { signOut } from 'firebase/auth'
+import type { Auth } from 'firebase/auth'
 import {
   addDoc,
   collection,
@@ -11,6 +12,7 @@ import {
   updateDoc,
   writeBatch
 } from 'firebase/firestore'
+import type { Firestore } from 'firebase/firestore'
 import { defaultTarotDeck } from '~/data/tarot'
 import type { TarotCardData } from '~/data/tarot'
 
@@ -22,7 +24,9 @@ useSeoMeta({
 })
 
 const config = useRuntimeConfig()
-const { $firebaseAuth, $firestore } = useNuxtApp()
+const nuxtApp = useNuxtApp()
+const firebaseAuth: Auth | null = nuxtApp.$firebaseAuth
+const firestore: Firestore | null = nuxtApp.$firestore
 const signingOut = ref(false)
 const adminEmail = ref('已驗證帳號')
 const visitorCount = ref<number | null>(null)
@@ -50,11 +54,11 @@ const firebaseConsoleUrl = computed(() => {
 })
 
 async function logout() {
-  if (!$firebaseAuth) return navigateTo('/')
+  if (!firebaseAuth) return navigateTo('/')
 
   signingOut.value = true
   try {
-    await signOut($firebaseAuth)
+    await signOut(firebaseAuth)
     await navigateTo('/')
   } finally {
     signingOut.value = false
@@ -87,12 +91,12 @@ function editCard(card: TarotCardData) {
 }
 
 async function loadCards() {
-  if (!$firestore) return
+  if (!firestore) return
 
   loadingCards.value = true
   feedback.value = ''
   try {
-    const snapshot = await getDocs(collection($firestore, 'tarotCards'))
+    const snapshot = await getDocs(collection(firestore, 'tarotCards'))
     cards.value = snapshot.docs
       .map(cardDoc => ({ id: cardDoc.id, ...cardDoc.data() } as TarotCardData))
       .sort((a, b) => a.name.localeCompare(b.name, 'zh-Hant'))
@@ -105,13 +109,13 @@ async function loadCards() {
 }
 
 async function loadVisitorStats() {
-  if (!$firestore) {
+  if (!firestore) {
     loadingVisitorStats.value = false
     return
   }
 
   try {
-    const snapshot = await getDoc(doc($firestore, 'siteStats', 'visitors'))
+    const snapshot = await getDoc(doc(firestore, 'siteStats', 'visitors'))
     if (!snapshot.exists()) return
 
     const data = snapshot.data()
@@ -131,7 +135,7 @@ async function loadVisitorStats() {
 }
 
 async function saveCard() {
-  if (!$firestore) return
+  if (!firestore) return
 
   saving.value = true
   feedback.value = ''
@@ -147,10 +151,10 @@ async function saveCard() {
 
   try {
     if (editingId.value) {
-      await updateDoc(doc($firestore, 'tarotCards', editingId.value), payload)
+      await updateDoc(doc(firestore, 'tarotCards', editingId.value), payload)
       feedback.value = `已更新「${payload.name}」。`
     } else {
-      await addDoc(collection($firestore, 'tarotCards'), {
+      await addDoc(collection(firestore, 'tarotCards'), {
         ...payload,
         createdAt: serverTimestamp()
       })
@@ -167,10 +171,10 @@ async function saveCard() {
 }
 
 async function removeCard(card: TarotCardData) {
-  if (!$firestore || !card.id || !window.confirm(`確定要刪除「${card.name}」嗎？`)) return
+  if (!firestore || !card.id || !window.confirm(`確定要刪除「${card.name}」嗎？`)) return
 
   try {
-    await deleteDoc(doc($firestore, 'tarotCards', card.id))
+    await deleteDoc(doc(firestore, 'tarotCards', card.id))
     feedback.value = `已刪除「${card.name}」。`
     await loadCards()
   } catch (error) {
@@ -180,13 +184,13 @@ async function removeCard(card: TarotCardData) {
 }
 
 async function importDefaultDeck() {
-  if (!$firestore || cards.value.length || importing.value) return
+  if (!firestore || cards.value.length || importing.value) return
 
   importing.value = true
   try {
-    const batch = writeBatch($firestore)
+    const batch = writeBatch(firestore)
     defaultTarotDeck.forEach((card) => {
-      const cardRef = doc(collection($firestore!, 'tarotCards'))
+      const cardRef = doc(collection(firestore, 'tarotCards'))
       batch.set(cardRef, { ...card, createdAt: serverTimestamp(), updatedAt: serverTimestamp() })
     })
     await batch.commit()
@@ -200,9 +204,13 @@ async function importDefaultDeck() {
   }
 }
 
-onMounted(async () => {
-  adminEmail.value = $firebaseAuth?.currentUser?.email ?? '已驗證帳號'
+async function initializeAdminPage() {
+  adminEmail.value = firebaseAuth?.currentUser?.email ?? '已驗證帳號'
   await Promise.all([loadCards(), loadVisitorStats()])
+}
+
+onMounted(() => {
+  void initializeAdminPage()
 })
 </script>
 

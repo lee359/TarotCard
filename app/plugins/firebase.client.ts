@@ -1,9 +1,18 @@
 import { getApp, getApps, initializeApp } from 'firebase/app'
-import type { FirebaseOptions } from 'firebase/app'
+import type { FirebaseApp, FirebaseOptions } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
+import type { Auth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
+import type { Firestore } from 'firebase/firestore'
 
-export default defineNuxtPlugin(() => {
+type FirebaseInjections = {
+  firebaseApp: FirebaseApp | null
+  firestore: Firestore | null
+  firebaseAuth: Auth | null
+  db: Firestore | null
+}
+
+export default defineNuxtPlugin<FirebaseInjections>(() => {
   const config = useRuntimeConfig()
 
   const firebaseConfig: FirebaseOptions = {
