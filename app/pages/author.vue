@@ -23,6 +23,7 @@ useSeoMeta({
     </nav>
 
     <section class="author-layout">
+      <MysticBackground />
       <div class="author-content animate__animated animate__fadeInLeft">
         <p class="eyebrow"><span /> MEET THE CREATOR</p>
         <h1>關於作者</h1>
@@ -61,9 +62,8 @@ useSeoMeta({
   grid-template-rows: clamp(64px, 9vh, 78px) minmax(0, 1fr); background: #090817; color: var(--ink);
 }
 .author-page::before {
-  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .5;
-  background-image: radial-gradient(circle, rgba(240,217,156,.75) 0 1px, transparent 1.5px), radial-gradient(circle, rgba(143,119,184,.45) 0 1px, transparent 1.5px);
-  background-position: 5% 12%, 74% 20%; background-size: 150px 150px, 220px 220px;
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse at 58% 48%, rgba(83,58,129,.18), transparent 48%), linear-gradient(135deg, rgba(212,179,106,.02), transparent 44%);
 }
 .nav {
   position: relative; z-index: 2; display: flex; width: min(1080px, calc(100% - 48px));
@@ -76,7 +76,7 @@ useSeoMeta({
 .nav-link { color: var(--muted); font-size: 12px; letter-spacing: .15em; text-decoration: none; }
 .nav-link:hover { color: var(--gold-light); }
 .author-layout {
-  display: grid; width: min(1080px, calc(100% - 48px)); min-height: 0; margin: 0 auto;
+  position: relative; display: grid; width: min(1080px, calc(100% - 48px)); min-height: 0; margin: 0 auto; isolation: isolate;
   padding: clamp(28px, 5vh, 54px) 0 clamp(48px, 7vh, 70px); grid-template-columns: minmax(0, 1fr) minmax(300px, 410px);
   gap: clamp(54px, 9vw, 120px); align-items: center;
 }

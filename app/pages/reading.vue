@@ -146,6 +146,7 @@ onMounted(loadDeck)
     </nav>
 
     <section id="reading" class="reading-section animate__animated animate__fadeIn">
+      <MysticBackground />
       <div class="section-heading animate__animated animate__fadeInUp">
         <p class="eyebrow"><span /> YOUR THREE-CARD SPREAD <span /></p>
         <div class="heading-title-row">
@@ -213,7 +214,7 @@ onMounted(loadDeck)
 
 <style scoped>
 main { display: grid; height: 100dvh; overflow: clip; grid-template-rows: clamp(56px, 7.5vh, 70px) minmax(0, 1fr); background: radial-gradient(circle at 50% 28%, rgba(60,47,102,.22), transparent 35%), #0a0919; color: var(--ink); }
-main::before { content: ''; position: fixed; inset: 0; pointer-events: none; opacity: .5; background-image: radial-gradient(circle, rgba(240,217,156,.8) 0 1px, transparent 1.5px), radial-gradient(circle, rgba(240,217,156,.45) 0 1px, transparent 1.5px); background-position: 5% 12%, 74% 20%; background-size: 140px 140px, 210px 210px; mask-image: linear-gradient(to bottom, black, transparent 85%); }
+main::before { content: ''; position: fixed; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 36%, rgba(83,58,129,.2), transparent 48%), linear-gradient(150deg, rgba(212,179,106,.025), transparent 38%); }
 .nav { position: relative; z-index: 1; display: flex; width: min(1080px, calc(100% - 48px)); margin: 0 auto; padding: clamp(9px, 1.5vh, 14px) 0; align-items: center; justify-content: space-between; }
 .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); font-family: 'Noto Serif TC', serif; font-size: 16px; letter-spacing: .14em; text-decoration: none; }
 .brand-mark { display: grid; width: 37px; height: 37px; place-items: center; border: 1px solid var(--gold); border-radius: 50%; color: var(--gold-light); font-family: Georgia, serif; font-size: 22px; }
@@ -221,7 +222,7 @@ main::before { content: ''; position: fixed; inset: 0; pointer-events: none; opa
 .nav-actions { display: flex; align-items: center; gap: 24px; }
 .nav-link { color: var(--muted); font-size: 12px; letter-spacing: .15em; text-decoration: none; }
 .nav-link:hover { color: var(--gold-light); }
-.reading-section { position: relative; z-index: 1; display: grid; min-height: 0; padding: clamp(4px, 1vh, 10px) 30px clamp(14px, 2.4vh, 24px); grid-template-rows: auto minmax(0, 1fr) auto; align-items: start; }
+.reading-section { position: relative; z-index: 1; display: grid; min-height: 0; padding: clamp(4px, 1vh, 10px) 30px clamp(14px, 2.4vh, 24px); overflow: hidden; isolation: isolate; grid-template-rows: auto minmax(0, 1fr) auto; align-items: start; }
 .section-heading { width: min(100%, 900px); margin: 0 auto; padding-top: clamp(8px, 2vh, 18px); text-align: center; }
 .eyebrow { display: flex; align-items: center; justify-content: center; gap: 13px; color: var(--gold); font-size: 9px; letter-spacing: .32em; }
 .eyebrow span { width: 34px; height: 1px; background: var(--gold); opacity: .5; }

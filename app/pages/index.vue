@@ -58,6 +58,7 @@ onMounted(() => {
 <template>
   <main>
     <section class="hero">
+      <MysticBackground />
       <nav class="nav animate__animated animate__fadeInDown" aria-label="主要導覽">
         <NuxtLink class="brand" to="/" aria-label="月之秘語首頁">
           <span class="brand-mark">☾</span>
@@ -124,7 +125,7 @@ onMounted(() => {
 <style scoped>
 main { height: 100dvh; overflow: clip; background: var(--night); }
 .hero { --edge-height: clamp(50px, 7vh, 64px); position: relative; display: grid; height: 100dvh; overflow: clip; isolation: isolate; grid-template-rows: var(--edge-height) minmax(0, 1fr) var(--edge-height); background: radial-gradient(circle at 50% 28%, rgba(86,64,129,.38), transparent 28%), radial-gradient(circle at 20% 20%, rgba(67,46,106,.2), transparent 30%), linear-gradient(180deg, #0e0b21, #090817); }
-.hero::before { content: ''; position: absolute; inset: 0; z-index: -1; opacity: .55; background-image: radial-gradient(circle, rgba(240,217,156,.8) 0 1px, transparent 1.5px), radial-gradient(circle, rgba(240,217,156,.45) 0 1px, transparent 1.5px); background-position: 5% 12%, 74% 20%; background-size: 140px 140px, 210px 210px; mask-image: linear-gradient(to bottom, black, transparent 85%); }
+.hero::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 50% 46%, rgba(83,58,129,.18), transparent 46%), linear-gradient(115deg, transparent 20%, rgba(212,179,106,.025) 50%, transparent 80%); }
 .hero::after { content: ''; position: absolute; left: 50%; bottom: 0; z-index: -1; width: min(900px, 88vw); height: 280px; border: 1px solid rgba(212,179,106,.12); border-radius: 50%; transform: translate(-50%, 55%); box-shadow: 0 0 80px rgba(86,64,129,.1); }
 .nav { display: flex; width: min(1080px, calc(100% - 48px)); height: var(--edge-height); margin: 0 auto; padding: 0; align-items: center; justify-content: space-between; }
 .brand { display: flex; align-items: center; gap: 12px; color: var(--ink); font-family: 'Noto Serif TC', serif; font-size: 16px; letter-spacing: .14em; text-decoration: none; }

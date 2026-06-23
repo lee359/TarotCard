@@ -19,6 +19,7 @@ useSeoMeta({
     </nav>
 
     <section class="about-hero animate__animated animate__fadeIn">
+      <MysticBackground />
       <p class="eyebrow"><span /> A GENTLE REMINDER <span /></p>
       <h1>塔羅不是預言，是與自己對話的方式</h1>
       <p class="lead">牌卡提供的是象徵與視角，不替你做決定。請把最終選擇留在自己手中，也讓現實中的專業建議成為你的支持。</p>
@@ -70,10 +71,9 @@ useSeoMeta({
   position: fixed;
   inset: 0;
   pointer-events: none;
-  opacity: .45;
-  background-image: radial-gradient(circle, rgba(240, 217, 156, .8) 0 1px, transparent 1.5px);
-  background-size: 170px 170px;
-  mask-image: linear-gradient(to bottom, black, transparent 85%);
+  background:
+    radial-gradient(ellipse at 50% 40%, rgba(83, 58, 129, .16), transparent 50%),
+    linear-gradient(125deg, transparent 25%, rgba(212, 179, 106, .025), transparent 76%);
 }
 
 .nav {
@@ -134,6 +134,7 @@ useSeoMeta({
 .about-hero {
   position: relative;
   z-index: 1;
+  isolation: isolate;
   display: grid;
   width: min(1040px, calc(100% - 40px));
   height: 100%;
