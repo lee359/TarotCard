@@ -310,7 +310,11 @@ h1, h2 { margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 600; }
   .nav-actions { align-items: flex-end; flex-direction: column; gap: 10px; }
   .nav-link { font-size: 11px; }
   .reading-section { min-height: auto; padding: 70px 20px 90px; }
-  .heading-title-row { flex-direction: column; gap: 14px; }
+  .section-heading { padding-top: 0; }
+  .heading-title-row { display: flex; width: 100%; margin-top: 10px; align-items: center; flex-direction: column; gap: 16px; }
+  .section-heading h1 { width: 100%; grid-row: auto; grid-column: auto; }
+  .view-result-button { width: min(220px, 100%); min-width: 0; margin: 0 auto; grid-row: auto; grid-column: auto; justify-self: auto; }
+  .section-heading > p:last-child { margin-top: 12px; padding: 0 8px; line-height: 1.7; }
   .cards-grid { max-width: 320px; grid-template-columns: 1fr; gap: 55px; }
   .cards-grid :deep(.card-slot) { width: min(100%, 260px); }
   .cards-grid :deep(.tarot-card) { width: 100%; }

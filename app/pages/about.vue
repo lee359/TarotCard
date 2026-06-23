@@ -300,32 +300,85 @@ footer > small {
 }
 
 @media (max-width: 760px) {
+  .about-page {
+    --edge-height: auto;
+    --content-top-gap: 38px;
+    --content-bottom-gap: 58px;
+    height: auto;
+    min-height: 100svh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    grid-template-rows: auto auto auto;
+  }
+
   .nav {
     width: calc(100% - 32px);
+    height: auto;
+    padding: 18px 0;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .brand {
+    min-width: 0;
+    font-size: 15px;
+  }
+
+  .nav-link {
+    flex: 0 0 auto;
+    font-size: 11px;
   }
 
   .about-hero {
-    height: 100%;
+    width: calc(100% - 32px);
+    height: auto;
     padding: var(--content-top-gap) 0 var(--content-bottom-gap);
+    align-content: start;
   }
 
   h1 {
+    margin-top: 16px;
+    font-size: clamp(30px, 9vw, 40px);
+    line-height: 1.35;
     letter-spacing: .04em;
     white-space: normal;
   }
 
   .lead {
+    margin-top: 16px;
+    font-size: 14px;
+    line-height: 1.9;
     white-space: normal;
   }
 
   .principles {
+    margin-top: 32px;
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .principles article {
+    min-height: 0;
+    padding: 22px 20px;
+  }
+
+  .principles h2 {
+    margin-top: 12px;
+    font-size: 21px;
+  }
+
+  .principles p {
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.85;
   }
 
   footer {
     width: calc(100% - 32px);
+    height: auto;
+    padding: 20px 0 max(22px, env(safe-area-inset-bottom));
     grid-template-columns: 1fr;
-    gap: 4px;
+    gap: 8px;
     text-align: center;
   }
 
@@ -335,6 +388,7 @@ footer > small {
 
   footer > small {
     text-align: center;
+    line-height: 1.6;
   }
 }
 </style>
