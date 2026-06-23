@@ -12,7 +12,7 @@ nuxt-web/
 │  │     └─ animate.min.css       # Animate.css 動畫套件
 │  ├─ components/
 │  │  ├─ AdminLoginModal.vue      # 管理員登入視窗
-│  │  └─ TarotCard.vue            # 塔羅卡翻牌、浮動及誤觸提示動畫
+│  │  └─ TarotCard.vue            # 塔羅卡翻牌、正逆位牌面、牌義及誤觸提示
 │  ├─ composables/
 │  │  └─ useAdminAccess.ts        # 查詢 Firestore 管理員權限
 │  ├─ data/
@@ -23,8 +23,8 @@ nuxt-web/
 │  │  ├─ about.vue                # 關於占卜頁面：/about
 │  │  ├─ admin.vue                # 牌卡管理後台：/admin
 │  │  ├─ author.vue               # 關於作者頁面：/author
-│  │  ├─ index.vue                # 首頁：/
-│  │  └─ reading.vue              # 三張牌占卜頁面：/reading
+│  │  ├─ index.vue                # 首頁：問題輸入、主題選擇與占卜流程建立
+│  │  └─ reading.vue              # 三張牌占卜、正逆位抽取與結果解讀
 │  ├─ plugins/
 │  │  ├─ firebase.client.ts       # Firebase、Auth 與 Firestore 初始化
 │  │  └─ visitor-tracking.client.ts # 每個前台工作階段記錄一次造訪
@@ -58,8 +58,11 @@ node_modules/                    # npm 套件
 
 ### `app/pages/index.vue`
 
-網站首頁，提供占卜主題輸入與主要導覽。
+網站首頁，提供塔羅問題輸入、占卜主題選擇與主要導覽。
 
+- 使用者必須填寫問題並明確選擇主題，才會啟用「開始抽牌」。
+- 問題最多 120 個字，會透過 `question` query 傳入 `/reading`。
+- 建立一次性的 `flow` 識別碼，供完整占卜流程與主題完成次數統計使用。
 - 導向 `/reading` 開始三張牌占卜。
 - 提供「關於作者」與「關於占卜」導覽。
 - Footer 中央提供「管理員登入」，開啟 `AdminLoginModal.vue`。
@@ -68,13 +71,15 @@ node_modules/                    # npm 套件
 
 ### `app/pages/reading.vue`
 
-三張牌占卜頁面，依序呈現「過去、現在、未來」。
+三張牌占卜頁面，依序呈現「過去、現在、未來」，並處理問題與牌面方向。
 
-- 從 `/reading?topic=...` 取得使用者問題。
-- 使用 `TarotCard.vue` 顯示三張隨機牌卡。
+- 從 `/reading?topic=...&question=...&flow=...` 取得主題、問題與流程識別碼。
+- 使用 `TarotCard.vue` 顯示三張隨機牌卡，每次洗牌會分別產生固定的正位或逆位狀態。
+- 逆位牌會以上下顛倒的牌面呈現，並提供能量受阻、延遲或轉向內在的解讀提示。
 - 必須由左至右依序翻牌；誤觸尚未解鎖的牌卡時會晃動並顯示提示。
 - 三張牌翻完後顯示「查看結果」按鈕，不會自動彈出結果視窗。
-- 點擊按鈕後開啟結果視窗，可透過右上角關閉按鈕退出。
+- 點擊按鈕後開啟結果視窗，顯示原始問題、三張牌的正逆位及個別摘要，可透過右上角關閉按鈕退出。
+- 重新抽牌時會重新產生三張牌及其正逆位狀態。
 
 ### `app/pages/author.vue`
 
@@ -105,7 +110,9 @@ node_modules/                    # npm 套件
 
 ### `app/components/TarotCard.vue`
 
-單張塔羅牌元件，負責卡牌正反面、翻牌動畫、滑鼠浮動效果、點擊狀態，以及未依順序翻牌時的晃動與文字提示。
+單張塔羅牌元件，負責卡牌正反面、正逆位牌面方向、翻牌動畫、滑鼠浮動效果與點擊狀態。翻牌後會顯示「正位／逆位」及對應的簡短牌義；未依順序翻牌時會晃動並顯示文字提示。
+
+正逆位由 `reading.vue` 在每次洗牌時產生，再透過 `reversed` prop 傳入本元件。此狀態只屬於當次占卜，不會寫回 `tarotCards` 或改變 Firestore 牌卡資料結構。
 
 ### `app/components/AdminLoginModal.vue`
 
@@ -178,7 +185,8 @@ siteStats/visitors
 
 ```text
 /
-├─ /reading?topic=使用者問題
+├─ 填寫問題並選擇主題
+├─ /reading?topic=主題&question=使用者問題&flow=流程識別碼
 │  └─ TarotCard.vue × 3
 ├─ /about
 ├─ /author

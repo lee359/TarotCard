@@ -11,6 +11,7 @@ useSeoMeta({
 
 const questions: Question[] = ['感情', '事業', '自我', '今日指引']
 const activeQuestion = ref<Question | null>(null)
+const tarotQuestion = ref('')
 const adminLoginOpen = ref(false)
 const route = useRoute()
 const nuxtApp = useNuxtApp()
@@ -23,7 +24,8 @@ function selectQuestion(question: Question) {
 }
 
 function startReading() {
-  if (!activeQuestion.value) return
+  const question = tarotQuestion.value.trim()
+  if (!activeQuestion.value || !question) return
 
   const flowId = crypto.randomUUID()
   sessionStorage.setItem('luna-arcana-reading-flow', JSON.stringify({
@@ -35,7 +37,8 @@ function startReading() {
     path: '/reading',
     query: {
       topic: activeQuestion.value,
-      flow: flowId
+      flow: flowId,
+      question
     }
   })
 }
@@ -80,6 +83,16 @@ onMounted(() => {
 
         <div class="question-panel animate__animated animate__fadeInUp">
           <p>此刻，你想問的是——</p>
+          <label class="question-input-label" for="tarot-question">寫下你想釐清的問題</label>
+          <input
+            id="tarot-question"
+            v-model="tarotQuestion"
+            class="question-input"
+            type="text"
+            maxlength="120"
+            autocomplete="off"
+            placeholder="例如：我該如何面對目前的感情關係？"
+          >
           <div class="question-tabs" role="group" aria-label="選擇占卜主題">
             <button
               v-for="question in questions"
@@ -95,14 +108,14 @@ onMounted(() => {
           <button
             class="primary-button"
             type="button"
-            :disabled="!activeQuestion"
+            :disabled="!activeQuestion || !tarotQuestion.trim()"
             aria-describedby="topic-guidance"
             @click="startReading"
           >
             <span>開始抽牌</span><span aria-hidden="true">→</span>
           </button>
-          <small id="topic-guidance" :class="{ 'selection-required': !activeQuestion }" aria-live="polite">
-            {{ activeQuestion ? '你的選擇不會被儲存，每次占卜都是獨一無二的相遇' : '請先選擇一個占卜主題' }}
+          <small id="topic-guidance" :class="{ 'selection-required': !activeQuestion || !tarotQuestion.trim() }" aria-live="polite">
+            {{ !tarotQuestion.trim() ? '請先寫下問題' : !activeQuestion ? '請選擇一個占卜主題' : '問題僅用於本次牌面解讀' }}
           </small>
         </div>
       </div>
@@ -160,7 +173,11 @@ h1 { margin: 0; font-family: 'Noto Serif TC', serif; font-size: clamp(30px, 3.7v
 .hero-lead { --animate-delay: .3s; animation-delay: var(--animate-delay); }
 .question-panel { width: min(560px, 100%); margin-top: clamp(12px, 2.2vh, 20px); --animate-delay: .45s; animation-delay: var(--animate-delay); }
 .question-panel > p { color: #d2ccda; font-family: 'Noto Serif TC', serif; font-size: 14px; }
-.question-tabs { display: grid; margin: 10px 0 14px; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.question-input-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.question-input { width: 100%; margin-top: 10px; padding: clamp(10px, 1.7vh, 13px) 15px; border: 1px solid var(--line); border-radius: 4px; outline: none; background: rgba(12,10,29,.72); color: var(--ink); font-family: 'Noto Serif TC', serif; font-size: 12px; letter-spacing: .04em; transition: border-color .2s ease, box-shadow .2s ease; }
+.question-input::placeholder { color: #6f6979; }
+.question-input:focus { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(212,179,106,.1), 0 0 24px rgba(86,64,129,.16); }
+.question-tabs { display: grid; margin: 9px 0 12px; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
 .question-tabs button { position: relative; padding: clamp(9px, 1.6vh, 12px) 8px; overflow: hidden; border: 0; border-right: 1px solid var(--line); background: rgba(17,14,38,.55); color: var(--muted); cursor: pointer; font-size: 12px; letter-spacing: .08em; transition: color .25s ease, background .25s ease, transform .25s ease, box-shadow .25s ease; }
 .question-tabs button::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 20%, rgba(255,241,199,.32) 48%, transparent 76%); transform: translateX(-125%); transition: transform .55s ease; }
 .question-tabs button:last-child { border-right: 0; }

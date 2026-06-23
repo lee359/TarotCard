@@ -12,6 +12,7 @@ const props = defineProps<{
   card?: TarotCard
   position: string
   revealed: boolean
+  reversed?: boolean
   disabled?: boolean
   lockedMessage?: string
   clearFeedbackSignal?: number
@@ -72,7 +73,7 @@ watch(() => props.clearFeedbackSignal, () => {
       class="tarot-card"
       :class="{ revealed, locked: disabled && !revealed }"
       :disabled="revealed"
-      :aria-label="revealed ? `${position}：${card?.name}` : disabled ? `${position}尚未能翻開，點擊查看順序提示` : `翻開${position}`"
+      :aria-label="revealed ? `${position}：${card?.name}${reversed ? '逆位' : '正位'}` : disabled ? `${position}尚未能翻開，點擊查看順序提示` : `翻開${position}`"
       @click="handleCardClick"
     >
       <span
@@ -89,7 +90,7 @@ watch(() => props.clearFeedbackSignal, () => {
             <span class="corner-star bottom">✦</span>
           </span>
 
-          <span class="card-face card-front">
+          <span class="card-face card-front" :class="{ reversed }">
             <span class="card-number">{{ card?.number }}</span>
             <span
               class="card-symbol"
@@ -109,7 +110,10 @@ watch(() => props.clearFeedbackSignal, () => {
         </span>
       </Transition>
     </button>
-    <p v-if="revealed" class="mini-meaning">{{ card?.meaning }}</p>
+    <p v-if="revealed" class="mini-meaning">
+      <strong>{{ reversed ? '逆位' : '正位' }}</strong>
+      {{ reversed ? `這份能量正處於受阻或內化狀態。${card?.meaning ?? ''}` : card?.meaning }}
+    </p>
     <p v-else class="hint">點擊翻牌</p>
   </article>
 </template>
@@ -155,6 +159,7 @@ watch(() => props.clearFeedbackSignal, () => {
   transform: rotateY(180deg); align-items: center; flex-direction: column; padding: 22px 18px;
   background: radial-gradient(circle at 50% 38%, rgba(212,179,106,.18), transparent 42%), linear-gradient(160deg, #292047, #121027 68%);
 }
+.card-front.reversed { transform: rotateY(180deg) rotate(180deg); }
 .card-number { color: var(--gold); font-family: 'Noto Serif TC', serif; font-size: 12px; letter-spacing: .15em; }
 .card-symbol { display: grid; flex: 1; place-items: center; color: var(--gold-light); font-family: Georgia, serif; font-size: clamp(68px, 9vw, 108px); line-height: 1; text-shadow: 0 0 35px rgba(240,217,156,.25); }
 .card-name { font-family: 'Noto Serif TC', serif; font-size: clamp(20px, 2.4vw, 27px); font-weight: 600; letter-spacing: .16em; }
@@ -173,6 +178,7 @@ watch(() => props.clearFeedbackSignal, () => {
 .misclick-fade-enter-from, .misclick-fade-leave-to { opacity: 0; }
 .hint { margin: 14px 0 0; color: #747080; font-size: 12px; letter-spacing: .12em; }
 .mini-meaning { margin: 14px auto 0; color: #c7c1cf; font-family: 'Noto Serif TC', serif; font-size: 13px; line-height: 1.8; }
+.mini-meaning strong { display: block; margin-bottom: 3px; color: var(--gold); font-size: 10px; font-weight: 500; letter-spacing: .16em; }
 @media (hover: hover) {
   .tarot-card:not(:disabled):hover .card-motion {
     animation-name: pulse;
