@@ -41,6 +41,45 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    match /siteStats/topicSelections {
+      allow read: if isAdmin();
+      allow create: if request.resource.data.keys()
+          .hasOnly(['love', 'career', 'self', 'daily', 'lastCompletedAt'])
+        && request.resource.data.love is int
+        && request.resource.data.career is int
+        && request.resource.data.self is int
+        && request.resource.data.daily is int
+        && request.resource.data.love >= 0
+        && request.resource.data.career >= 0
+        && request.resource.data.self >= 0
+        && request.resource.data.daily >= 0
+        && request.resource.data.love
+          + request.resource.data.career
+          + request.resource.data.self
+          + request.resource.data.daily == 1
+        && request.resource.data.lastCompletedAt == request.time;
+      allow update: if request.resource.data.keys()
+          .hasOnly(['love', 'career', 'self', 'daily', 'lastCompletedAt'])
+        && request.resource.data.love is int
+        && request.resource.data.career is int
+        && request.resource.data.self is int
+        && request.resource.data.daily is int
+        && request.resource.data.love >= resource.data.love
+        && request.resource.data.career >= resource.data.career
+        && request.resource.data.self >= resource.data.self
+        && request.resource.data.daily >= resource.data.daily
+        && request.resource.data.love
+          + request.resource.data.career
+          + request.resource.data.self
+          + request.resource.data.daily
+          == resource.data.love
+          + resource.data.career
+          + resource.data.self
+          + resource.data.daily + 1
+        && request.resource.data.lastCompletedAt == request.time;
+      allow delete: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

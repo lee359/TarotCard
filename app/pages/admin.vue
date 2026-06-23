@@ -8,6 +8,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   serverTimestamp,
   updateDoc,
   writeBatch
@@ -32,6 +33,9 @@ const adminEmail = ref('已驗證帳號')
 const visitorCount = ref<number | null>(null)
 const lastVisitedAt = ref('尚無造訪紀錄')
 const loadingVisitorStats = ref(true)
+const loadingTopicStats = ref(true)
+const topicStats = ref({ love: 0, career: 0, self: 0, daily: 0 })
+let unsubscribeTopicStats: (() => void) | undefined
 const cards = ref<TarotCardData[]>([])
 const loadingCards = ref(true)
 const saving = ref(false)
@@ -134,6 +138,31 @@ async function loadVisitorStats() {
   }
 }
 
+function subscribeTopicStats() {
+  if (!firestore) {
+    loadingTopicStats.value = false
+    return
+  }
+
+  unsubscribeTopicStats = onSnapshot(
+    doc(firestore, 'siteStats', 'topicSelections'),
+    (snapshot) => {
+      const data = snapshot.data()
+      topicStats.value = {
+        love: typeof data?.love === 'number' ? data.love : 0,
+        career: typeof data?.career === 'number' ? data.career : 0,
+        self: typeof data?.self === 'number' ? data.self : 0,
+        daily: typeof data?.daily === 'number' ? data.daily : 0
+      }
+      loadingTopicStats.value = false
+    },
+    (error) => {
+      console.error('[Firestore] Unable to watch topic statistics.', error)
+      loadingTopicStats.value = false
+    }
+  )
+}
+
 async function saveCard() {
   if (!firestore) return
 
@@ -206,11 +235,16 @@ async function importDefaultDeck() {
 
 async function initializeAdminPage() {
   adminEmail.value = firebaseAuth?.currentUser?.email ?? '已驗證帳號'
+  subscribeTopicStats()
   await Promise.all([loadCards(), loadVisitorStats()])
 }
 
 onMounted(() => {
   void initializeAdminPage()
+})
+
+onBeforeUnmount(() => {
+  unsubscribeTopicStats?.()
 })
 </script>
 
@@ -242,6 +276,17 @@ onMounted(() => {
           <p>訪客瀏覽次數統計</p>
           <strong>{{ loadingVisitorStats ? '讀取中…' : (visitorCount ?? 0).toLocaleString('zh-TW') }}</strong>
           <small>最後造訪：{{ lastVisitedAt }}</small>
+        </article>
+        <article class="topic-stat">
+          <span class="stat-symbol" aria-hidden="true">✦</span>
+          <p>占卜主題完成次數</p>
+          <div v-if="loadingTopicStats" class="topic-loading">讀取中…</div>
+          <dl v-else class="topic-counts">
+            <div><dt>感情</dt><dd>{{ topicStats.love.toLocaleString('zh-TW') }}</dd></div>
+            <div><dt>事業</dt><dd>{{ topicStats.career.toLocaleString('zh-TW') }}</dd></div>
+            <div><dt>自我</dt><dd>{{ topicStats.self.toLocaleString('zh-TW') }}</dd></div>
+            <div><dt>今日指引</dt><dd>{{ topicStats.daily.toLocaleString('zh-TW') }}</dd></div>
+          </dl>
         </article>
       </div>
 
@@ -327,13 +372,18 @@ onMounted(() => {
 h1, h2 { margin: 0; font-family: 'Noto Serif TC', serif; font-weight: 600; }
 h1 { margin-top: 14px; font-size: clamp(38px, 5vw, 58px); letter-spacing: .08em; }
 header > p:last-child { margin: 10px 0 0; color: var(--muted); font-size: 12px; letter-spacing: .06em; }
-.status-grid { display: grid; margin-top: 42px; grid-template-columns: minmax(0, 1fr); }
+.status-grid { display: grid; margin-top: 42px; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
 .status-grid article { position: relative; min-height: 130px; padding: 24px; border: 1px solid var(--line); background: rgba(20,17,42,.72); }
 .stat-symbol { position: absolute; top: 20px; right: 22px; color: var(--gold); font-size: 20px; }
 .status-grid p { margin: 0; color: var(--muted); font-size: 11px; letter-spacing: .1em; }
 .status-grid strong { display: block; margin-top: 24px; color: var(--gold-light); font-family: 'Noto Serif TC', serif; font-size: 20px; font-weight: 500; letter-spacing: .1em; }
 .visitor-stat strong { margin-top: 14px; font-family: 'DM Sans', sans-serif; font-size: 30px; letter-spacing: 0; }
 .visitor-stat small { display: block; margin-top: 6px; color: var(--muted); font-size: 9px; line-height: 1.5; letter-spacing: .04em; }
+.topic-loading { margin-top: 24px; color: var(--muted); font-size: 12px; }
+.topic-counts { display: grid; margin: 16px 0 0; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.topic-counts div { padding: 9px 7px; border: 1px solid var(--line); text-align: center; }
+.topic-counts dt { color: var(--muted); font-size: 10px; }
+.topic-counts dd { margin: 6px 0 0; color: var(--gold-light); font-family: 'DM Sans', sans-serif; font-size: 20px; }
 .firestore-section { display: flex; margin-top: 20px; padding: 28px 30px; align-items: center; justify-content: space-between; gap: 30px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .section-label { margin: 0 0 8px; color: var(--gold); font-size: 9px; letter-spacing: .25em; }
 .firestore-section h2 { font-size: 24px; letter-spacing: .08em; }

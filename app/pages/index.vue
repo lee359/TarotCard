@@ -10,7 +10,7 @@ useSeoMeta({
 })
 
 const questions: Question[] = ['感情', '事業', '自我', '今日指引']
-const activeQuestion = ref<Question>('感情')
+const activeQuestion = ref<Question | null>(null)
 const adminLoginOpen = ref(false)
 const route = useRoute()
 const nuxtApp = useNuxtApp()
@@ -18,10 +18,25 @@ const adminLoginMessage = computed(() => route.query.adminError === 'unauthorize
   ? '此帳號沒有管理員權限。'
   : '')
 
+function selectQuestion(question: Question) {
+  activeQuestion.value = question
+}
+
 function startReading() {
+  if (!activeQuestion.value) return
+
+  const flowId = crypto.randomUUID()
+  sessionStorage.setItem('luna-arcana-reading-flow', JSON.stringify({
+    id: flowId,
+    topic: activeQuestion.value
+  }))
+
   return navigateTo({
     path: '/reading',
-    query: { topic: activeQuestion.value }
+    query: {
+      topic: activeQuestion.value,
+      flow: flowId
+    }
   })
 }
 
@@ -68,16 +83,26 @@ onMounted(() => {
             <button
               v-for="question in questions"
               :key="question"
+              type="button"
               :class="{ active: activeQuestion === question }"
-              @click="activeQuestion = question"
+              :aria-pressed="activeQuestion === question"
+              @click="selectQuestion(question)"
             >
               {{ question }}
             </button>
           </div>
-          <button class="primary-button" @click="startReading">
+          <button
+            class="primary-button"
+            type="button"
+            :disabled="!activeQuestion"
+            aria-describedby="topic-guidance"
+            @click="startReading"
+          >
             <span>開始抽牌</span><span aria-hidden="true">→</span>
           </button>
-          <small>你的選擇不會被儲存，每次占卜都是獨一無二的相遇</small>
+          <small id="topic-guidance" :class="{ 'selection-required': !activeQuestion }" aria-live="polite">
+            {{ activeQuestion ? '你的選擇不會被儲存，每次占卜都是獨一無二的相遇' : '請先選擇一個占卜主題' }}
+          </small>
         </div>
       </div>
 
@@ -135,12 +160,18 @@ h1 { margin: 0; font-family: 'Noto Serif TC', serif; font-size: clamp(30px, 3.7v
 .question-panel { width: min(560px, 100%); margin-top: clamp(12px, 2.2vh, 20px); --animate-delay: .45s; animation-delay: var(--animate-delay); }
 .question-panel > p { color: #d2ccda; font-family: 'Noto Serif TC', serif; font-size: 14px; }
 .question-tabs { display: grid; margin: 10px 0 14px; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
-.question-tabs button { padding: clamp(9px, 1.6vh, 12px) 8px; border: 0; border-right: 1px solid var(--line); background: rgba(17,14,38,.55); color: var(--muted); cursor: pointer; font-size: 12px; letter-spacing: .08em; transition: .25s ease; }
+.question-tabs button { position: relative; padding: clamp(9px, 1.6vh, 12px) 8px; overflow: hidden; border: 0; border-right: 1px solid var(--line); background: rgba(17,14,38,.55); color: var(--muted); cursor: pointer; font-size: 12px; letter-spacing: .08em; transition: color .25s ease, background .25s ease, transform .25s ease, box-shadow .25s ease; }
+.question-tabs button::before { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 20%, rgba(255,241,199,.32) 48%, transparent 76%); transform: translateX(-125%); transition: transform .55s ease; }
 .question-tabs button:last-child { border-right: 0; }
-.question-tabs button:hover, .question-tabs button.active { background: var(--gold); color: #131025; }
+.question-tabs button:hover { z-index: 1; background: var(--gold); color: #131025; transform: translateY(-3px); box-shadow: 0 8px 22px rgba(212,179,106,.25), inset 0 0 0 1px rgba(255,244,207,.45); }
+.question-tabs button:hover::before { transform: translateX(125%); }
+.question-tabs button.active { background: var(--gold); color: #131025; box-shadow: inset 0 -3px 0 rgba(82,57,20,.3); }
+.question-tabs button:focus-visible { z-index: 2; outline: 2px solid var(--gold-light); outline-offset: -3px; }
 .primary-button { display: flex; min-width: 230px; margin: auto; padding: clamp(11px, 2vh, 14px) 22px; align-items: center; justify-content: center; gap: 55px; border: 1px solid var(--gold); background: var(--gold); color: #151129; cursor: pointer; letter-spacing: .14em; transition: .25s ease; }
-.primary-button:hover { background: var(--gold-light); box-shadow: 0 0 30px rgba(212,179,106,.2); transform: translateY(-2px); }
+.primary-button:hover:not(:disabled) { background: var(--gold-light); box-shadow: 0 0 30px rgba(212,179,106,.2); transform: translateY(-2px); }
+.primary-button:disabled { border-color: var(--line); background: rgba(32,27,56,.72); color: #777181; cursor: not-allowed; opacity: .72; }
 .question-panel > small { display: block; margin-top: 10px; color: #6f6b7b; font-size: 10px; letter-spacing: .06em; }
+.question-panel > small.selection-required { color: var(--gold); }
 footer { position: relative; z-index: 1; display: grid; width: min(1080px, calc(100% - 48px)); height: var(--edge-height); margin: 0 auto; padding: 0; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center; border-top: 1px solid rgba(212,179,106,.1); color: #6f6b7b; font-size: 10px; }
 footer p { margin: 0; font-family: 'Noto Serif TC', serif; }
 .footer-admin-link { justify-self: start; padding: 0; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 12px; letter-spacing: .15em; text-decoration: none; transition: color .2s ease; }
@@ -163,5 +194,9 @@ footer > small { justify-self: end; text-align: right; }
   footer { width: calc(100% - 32px); grid-template-columns: 1fr; gap: 4px; text-align: center; }
   .footer-admin-link { padding: 4px 0; font-size: 11px; }
   footer > small { justify-self: center; text-align: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .question-tabs button, .question-tabs button::before { transition: none; }
+  .question-tabs button:hover { transform: none; }
 }
 </style>

@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "deploy --only firestore:rules": "tarotcard-de49e"
+  },
+  "targets": {},
+  "etags": {}
+}

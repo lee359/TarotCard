@@ -1,7 +1,15 @@
 <script setup lang="ts">
-import { collection, getDocs } from 'firebase/firestore'
+import { collection, doc, getDocs, increment, serverTimestamp, setDoc } from 'firebase/firestore'
 type Question = '感情' | '事業' | '自我' | '今日指引'
 type Card = { number: string; name: string; english: string; symbol: string; keywords: string; meaning: string }
+
+const READING_FLOW_KEY = 'luna-arcana-reading-flow'
+const topicStatFields: Record<Question, string> = {
+  感情: 'love',
+  事業: 'career',
+  自我: 'self',
+  今日指引: 'daily'
+}
 
 useSeoMeta({
   title: '三張牌占卜｜月之秘語',
@@ -20,6 +28,8 @@ const activeQuestion = computed<Question>(() => {
 const revealed = ref([false, false, false])
 const drawnCards = ref<Card[]>([])
 const resultVisible = ref(false)
+const resultRecorded = ref(false)
+const recordingResult = ref(false)
 const clearFeedbackSignal = ref(0)
 const positions = ['過去 · 根源', '現在 · 課題', '未來 · 指引']
 const lockedMessages = [
@@ -84,6 +94,41 @@ function revealCard(index: number) {
   revealed.value[index] = true
 }
 
+async function viewResult() {
+  resultVisible.value = true
+
+  if (resultRecorded.value || recordingResult.value) return
+
+  const flowId = typeof route.query.flow === 'string' ? route.query.flow : ''
+  const savedFlow = sessionStorage.getItem(READING_FLOW_KEY)
+  if (!flowId || !savedFlow) return
+
+  try {
+    const flow = JSON.parse(savedFlow) as { id?: string, topic?: Question }
+    if (flow.id !== flowId || flow.topic !== activeQuestion.value) return
+
+    const { $firestore } = useNuxtApp()
+    if (!$firestore) return
+
+    recordingResult.value = true
+    const selectedField = topicStatFields[activeQuestion.value]
+    await setDoc(doc($firestore, 'siteStats', 'topicSelections'), {
+      love: increment(selectedField === 'love' ? 1 : 0),
+      career: increment(selectedField === 'career' ? 1 : 0),
+      self: increment(selectedField === 'self' ? 1 : 0),
+      daily: increment(selectedField === 'daily' ? 1 : 0),
+      lastCompletedAt: serverTimestamp()
+    }, { merge: true })
+
+    resultRecorded.value = true
+    sessionStorage.removeItem(READING_FLOW_KEY)
+  } catch (error) {
+    console.warn('[Firestore] Unable to record the selected topic.', error)
+  } finally {
+    recordingResult.value = false
+  }
+}
+
 onMounted(loadDeck)
 </script>
 
@@ -109,7 +154,7 @@ onMounted(loadDeck)
             v-if="allRevealed"
             class="view-result-button animate__animated animate__fadeInRight"
             type="button"
-            @click="resultVisible = true"
+            @click="viewResult"
           >
             查看結果
           </button>
