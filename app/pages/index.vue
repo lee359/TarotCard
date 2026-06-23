@@ -13,6 +13,7 @@ const questions: Question[] = ['感情', '事業', '自我', '今日指引']
 const activeQuestion = ref<Question | null>(null)
 const tarotQuestion = ref('')
 const adminLoginOpen = ref(false)
+const rulesOpen = ref(false)
 const route = useRoute()
 const nuxtApp = useNuxtApp()
 const adminLoginMessage = computed(() => route.query.adminError === 'unauthorized'
@@ -68,8 +69,9 @@ onMounted(() => {
           <span>月之秘語<small>LUNA ARCANA</small></span>
         </NuxtLink>
         <div class="nav-actions">
-          <NuxtLink class="nav-link" to="/author">關於作者</NuxtLink>
+          <button class="nav-link nav-button" type="button" @click="rulesOpen = true">規則說明</button>
           <NuxtLink class="nav-link" to="/about">關於占卜</NuxtLink>
+          <NuxtLink class="nav-link" to="/author">關於作者</NuxtLink>
         </div>
       </nav>
 
@@ -132,6 +134,7 @@ onMounted(() => {
       v-model="adminLoginOpen"
       :initial-message="adminLoginMessage"
     />
+    <CardRulesModal v-model="rulesOpen" />
   </main>
 </template>
 
@@ -146,7 +149,9 @@ main { height: 100dvh; overflow: clip; background: var(--night); }
 .brand small { display: block; margin-top: 3px; color: var(--gold); font-family: 'DM Sans', sans-serif; font-size: 7px; letter-spacing: .26em; }
 .nav-actions { display: flex; align-items: center; gap: 24px; }
 .nav-link { color: var(--muted); font-size: 12px; letter-spacing: .15em; text-decoration: none; }
+.nav-button { padding: 0; border: 0; background: transparent; cursor: pointer; font-family: inherit; }
 .nav-link:hover { color: var(--gold-light); }
+.nav-link:focus-visible { outline: 1px solid var(--gold-light); outline-offset: 5px; }
 .hero-content { display: flex; width: min(740px, calc(100% - 40px)); margin: 0 auto; padding: clamp(6px, 1.5vh, 14px) 0 clamp(10px, 2vh, 18px); align-items: center; min-height: 0; flex-direction: column; justify-content: center; text-align: center; }
 .eyebrow { display: flex; align-items: center; justify-content: center; gap: 13px; color: var(--gold); font-size: 9px; letter-spacing: .32em; }
 .eyebrow span { width: 34px; height: 1px; background: var(--gold); opacity: .5; }
