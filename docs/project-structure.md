@@ -12,6 +12,8 @@ nuxt-web/
 │  │     └─ animate.min.css       # Animate.css 動畫套件
 │  ├─ components/
 │  │  ├─ AdminLoginModal.vue      # 管理員登入視窗
+│  │  ├─ CardRulesModal.vue       # 塔羅規則說明彈出視窗
+│  │  ├─ MysticBackground.vue     # 共用神秘學幾何與月相動態背景
 │  │  └─ TarotCard.vue            # 塔羅卡翻牌、正逆位牌面、牌義及誤觸提示
 │  ├─ composables/
 │  │  └─ useAdminAccess.ts        # 查詢 Firestore 管理員權限
@@ -29,13 +31,15 @@ nuxt-web/
 │  │  ├─ firebase.client.ts       # Firebase、Auth 與 Firestore 初始化
 │  │  └─ visitor-tracking.client.ts # 每個前台工作階段記錄一次造訪
 │  └─ app.vue                     # Nuxt 應用程式根元件
-├─ doc/
+├─ docs/
+│  ├─ CardRules.md                # 塔羅占卜與卡牌操作規則
 │  └─ project-structure.md        # 本文件
 ├─ public/
 │  ├─ images/
 │  │  └─ author-profile.png       # 作者頁主視覺圖片
 │  ├─ favicon.ico                 # 網頁圖示
 │  └─ robots.txt                  # 搜尋引擎爬蟲設定
+├─ .firebaserc                    # Firebase CLI 專案別名與專案 ID 對應
 ├─ firebase.json                  # Firebase CLI 與 Firestore 規則設定
 ├─ firestore.rules               # Firestore 存取安全規則
 ├─ nuxt.config.ts                # Nuxt、SEO、CSS、Firebase 環境變數設定
@@ -64,9 +68,11 @@ node_modules/                    # npm 套件
 - 問題最多 120 個字，會透過 `question` query 傳入 `/reading`。
 - 建立一次性的 `flow` 識別碼，供完整占卜流程與主題完成次數統計使用。
 - 導向 `/reading` 開始三張牌占卜。
-- 提供「關於作者」與「關於占卜」導覽。
+- 導覽依序提供「規則說明」、「關於占卜」與「關於作者」。
+- 點擊「規則說明」會開啟 `CardRulesModal.vue`，可透過右上角關閉鍵、背景或 Esc 離開。
 - Footer 中央提供「管理員登入」，開啟 `AdminLoginModal.vue`。
 - 中央月亮圓環具有環繞擺動動畫。
+- 手機版改用自然頁面高度與垂直捲動，並放大導覽、輸入框、主題按鈕及主要操作區域。
 - 網頁標題固定由 `nuxt.config.ts` 設定為「月之秘語 | 塔羅占卜」。
 
 ### `app/pages/reading.vue`
@@ -80,6 +86,7 @@ node_modules/                    # npm 套件
 - 三張牌翻完後顯示「查看結果」按鈕，不會自動彈出結果視窗。
 - 點擊按鈕後開啟結果視窗，顯示原始問題、三張牌的正逆位及個別摘要，可透過右上角關閉按鈕退出。
 - 重新抽牌時會重新產生三張牌及其正逆位狀態。
+- 手機版將標題與「查看結果」改為單欄排列，清除桌面 Grid 定位，避免按鈕與其他內容重疊。
 
 ### `app/pages/author.vue`
 
@@ -95,6 +102,9 @@ node_modules/                    # npm 套件
 
 說明塔羅占卜概念與三張牌陣的使用方式。
 
+- 手機版使用自然頁面高度及垂直捲動，確保標題、說明卡片與 Footer 均可完整查看。
+- 三張占卜原則卡片在窄螢幕下改為單欄排列。
+
 ### `app/pages/admin.vue`
 
 管理員牌卡後台，套用 `admin` middleware，並設定為僅在客戶端渲染。
@@ -108,6 +118,15 @@ node_modules/                    # npm 套件
 
 ## 共用模組
 
+### `app/components/MysticBackground.vue`
+
+非管理頁面共用的神秘學背景元件，使用儀式圓、星盤刻度、交錯軌道、月相及行星符號建立視覺層次。
+
+- 套用於 `index.vue`、`reading.vue`、`about.vue` 與 `author.vue` 的主要 section。
+- 使用緩慢旋轉、呼吸與漂浮動畫，避免干擾前景內容操作。
+- 支援 `prefers-reduced-motion`，使用者要求減少動態效果時會停止背景動畫。
+- `admin.vue` 不套用此背景。
+
 ### `app/components/TarotCard.vue`
 
 單張塔羅牌元件，負責卡牌正反面、正逆位牌面方向、翻牌動畫、滑鼠浮動效果與點擊狀態。翻牌後會顯示「正位／逆位」及對應的簡短牌義；未依順序翻牌時會晃動並顯示文字提示。
@@ -117,6 +136,16 @@ node_modules/                    # npm 套件
 ### `app/components/AdminLoginModal.vue`
 
 使用 Firebase Authentication 的 Email/Password 登入。登入後會查詢 Firestore `admins/{uid}`，只有 `active: true` 的帳號能進入 `/admin`。
+
+### `app/components/CardRulesModal.vue`
+
+由首頁「規則說明」按鈕開啟的塔羅規則視窗，內容參考 `docs/CardRules.md`，包含開始占卜、洗牌牌位、正逆位、翻牌順序、查看結果與重新抽牌等規則。
+
+- 使用 `Teleport` 將視窗掛載至 `body`，避免受到首頁版面層級限制。
+- 支援右上角關閉鍵、點擊背景及 Esc 鍵關閉。
+- 開啟期間鎖定背景頁面捲動。
+- 手機版內容可垂直捲動。
+- Footer 使用高亮警示區塊，提醒塔羅結果不取代專業建議。
 
 ### `app/plugins/firebase.client.ts`
 
@@ -157,6 +186,8 @@ NUXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 
 本機將值放在 `.env`；部署至 Vercel 時，需在專案的 Environment Variables 建立相同名稱。Firebase Web API Key 會傳送至瀏覽器，實際資料安全由 Authentication、Firestore Rules 與 Firebase API Key 限制共同控管。
 
+`.firebaserc` 保存 Firebase CLI 使用的專案別名，並將其對應至 Firebase 專案 `tarotcard-de49e`；`firebase.json` 則指定部署時使用根目錄的 `firestore.rules`。
+
 ### Firestore Collections
 
 ```text
@@ -186,6 +217,8 @@ siteStats/visitors
 ```text
 /
 ├─ 填寫問題並選擇主題
+├─ 規則說明
+│  └─ CardRulesModal.vue
 ├─ /reading?topic=主題&question=使用者問題&flow=流程識別碼
 │  └─ TarotCard.vue × 3
 ├─ /about
