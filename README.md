@@ -5,7 +5,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-enabled-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Firebase](https://img.shields.io/badge/Firebase-12.13.0-FFCA28?logo=firebase&logoColor=black)](https://firebase.google.com/)
 [![Responsive](https://img.shields.io/badge/RWD-Mobile%20Friendly-8B6DB1?logo=css3&logoColor=white)](#5-功能與預期畫面)
-[![GitHub last commit](https://img.shields.io/github/last-commit/lee359/nuxt-web?logo=github)](https://github.com/lee359/nuxt-web/commits/main)
+
 
 ## 1. 專案簡介
 
@@ -179,7 +179,7 @@ npm run generate
 
 ### RWD
 
-首頁、占卜頁、關於頁與規則視窗皆包含手機版斷點設定；手機版採自然頁面高度與垂直捲動，避免固定 `100dvh` 導致內容裁切或元件重疊。
+首頁、占卜頁、關於頁與規則視窗皆包含手機版斷點設定；手機版採自然頁面高度與垂直捲動。
 
 ## 6. 專案結構
 
@@ -255,12 +255,9 @@ siteStats/topicSelections
 
 ## 8. 連結與參考資料
 
-- GitHub Repository：<https://github.com/lee359/nuxt-web>
 - [Nuxt 官方文件](https://nuxt.com/docs/getting-started/introduction)
 - [Vue 官方文件](https://vuejs.org/guide/introduction.html)
 - [Firebase Web 文件](https://firebase.google.com/docs/web/setup)
 - [Shields.io Badge 產生器](https://shields.io/)
-- [專案結構文件](docs/project-structure.md)
-- [卡牌規則文件](docs/CardRules.md)
 
-README badges 使用 [Shields.io](https://shields.io/) 產生。
+

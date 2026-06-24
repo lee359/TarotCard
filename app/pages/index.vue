@@ -124,7 +124,7 @@ onMounted(() => {
 
       <footer>
         <button class="footer-admin-link" type="button" @click="openAdminLogin">管理員登入</button>
-        <p>願你在每一次提問裡，更靠近真實的自己。</p>
+        <p>*塔羅結果僅供自我探索與娛樂，不取代任何專業建議*</p>
         <small>© {{ new Date().getFullYear() }} LUNA ARCANA · 僅供自我探索與娛樂</small>
       </footer>
     </section>
