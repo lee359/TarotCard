@@ -41,6 +41,23 @@ useSeoMeta({
           <p>塔羅可以陪你整理問題，但人生的方向仍由你親手決定。</p>
         </article>
       </div>
+
+      <div class="crystal-ball-scene animate__animated animate__fadeInUp" aria-hidden="true">
+        <div class="crystal-ball-float">
+          <span class="crystal-glow" />
+          <div class="crystal-sphere">
+            <span class="crystal-mist crystal-mist-one" />
+            <span class="crystal-mist crystal-mist-two" />
+            <span class="crystal-star crystal-star-one">✦</span>
+            <span class="crystal-star crystal-star-two">·</span>
+            <span class="crystal-star crystal-star-three">✧</span>
+            <span class="crystal-shine" />
+          </div>
+          <span class="crystal-collar" />
+          <span class="crystal-base" />
+        </div>
+        <span class="crystal-shadow" />
+      </div>
     </section>
 
     <footer>
@@ -227,6 +244,166 @@ h1 {
   line-height: 1.9;
 }
 
+.crystal-ball-scene {
+  position: absolute;
+  bottom: clamp(8px, 1.8vh, 18px);
+  left: 50%;
+  width: 132px;
+  height: 116px;
+  margin-left: -66px;
+  pointer-events: none;
+  animation-delay: .45s;
+}
+
+.crystal-ball-float {
+  position: absolute;
+  inset: 0;
+  animation: crystal-float 6s ease-in-out infinite;
+}
+
+.crystal-glow {
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(171, 132, 232, .28), rgba(97, 68, 151, .1) 50%, transparent 72%);
+  filter: blur(5px);
+  transform: translateX(-50%);
+  animation: crystal-breathe 6s ease-in-out infinite;
+}
+
+.crystal-sphere {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  width: 76px;
+  height: 76px;
+  overflow: hidden;
+  border: 1px solid rgba(231, 214, 255, .7);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 36% 28%, rgba(255, 255, 255, .36), transparent 12%),
+    radial-gradient(circle at 52% 62%, rgba(105, 67, 166, .68), rgba(38, 27, 78, .58) 52%, rgba(13, 11, 30, .78) 78%);
+  box-shadow:
+    inset -10px -12px 22px rgba(8, 6, 26, .55),
+    inset 8px 7px 18px rgba(224, 205, 255, .12),
+    0 0 24px rgba(143, 101, 207, .22);
+  transform: translateX(-50%);
+}
+
+.crystal-sphere::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 50%;
+}
+
+.crystal-mist {
+  position: absolute;
+  width: 62px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(190, 158, 232, .2);
+  filter: blur(6px);
+  animation: crystal-mist 9s linear infinite;
+}
+
+.crystal-mist-one { top: 23px; left: -17px; transform: rotate(15deg); }
+.crystal-mist-two { right: -24px; bottom: 12px; animation-direction: reverse; animation-delay: -4s; }
+
+.crystal-star {
+  position: absolute;
+  color: rgba(244, 223, 165, .9);
+  font-family: Georgia, serif;
+  line-height: 1;
+  text-shadow: 0 0 7px rgba(244, 223, 165, .72);
+  animation: crystal-twinkle 3.2s ease-in-out infinite;
+}
+
+.crystal-star-one { top: 19px; left: 26px; font-size: 10px; }
+.crystal-star-two { top: 35px; right: 20px; font-size: 17px; animation-delay: -1.1s; }
+.crystal-star-three { bottom: 18px; left: 21px; font-size: 8px; animation-delay: -2.2s; }
+
+.crystal-shine {
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  width: 17px;
+  height: 8px;
+  border-top: 2px solid rgba(255, 255, 255, .62);
+  border-radius: 50%;
+  transform: rotate(-42deg);
+}
+
+.crystal-collar {
+  position: absolute;
+  top: 73px;
+  left: 50%;
+  z-index: -1;
+  width: 52px;
+  height: 13px;
+  border: 1px solid rgba(212, 179, 106, .64);
+  border-radius: 50%;
+  background: linear-gradient(180deg, #342845, #171329);
+  box-shadow: inset 0 2px 4px rgba(244, 218, 158, .14);
+  transform: translateX(-50%);
+}
+
+.crystal-base {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  z-index: -2;
+  width: 64px;
+  height: 24px;
+  border: 1px solid rgba(212, 179, 106, .52);
+  border-radius: 8px 8px 50% 50%;
+  background: linear-gradient(155deg, #332744, #110e22 70%);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, .28);
+  transform: translateX(-50%);
+}
+
+.crystal-shadow {
+  position: absolute;
+  bottom: 1px;
+  left: 50%;
+  width: 78px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .38);
+  filter: blur(4px);
+  transform: translateX(-50%);
+  animation: crystal-shadow 6s ease-in-out infinite;
+}
+
+@keyframes crystal-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+
+@keyframes crystal-breathe {
+  0%, 100% { opacity: .65; transform: translateX(-50%) scale(.94); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.08); }
+}
+
+@keyframes crystal-mist {
+  from { transform: translateX(-15px) rotate(10deg); }
+  to { transform: translateX(72px) rotate(25deg); }
+}
+
+@keyframes crystal-twinkle {
+  0%, 100% { opacity: .32; transform: scale(.72); }
+  50% { opacity: 1; transform: scale(1.16); }
+}
+
+@keyframes crystal-shadow {
+  0%, 100% { opacity: .68; transform: translateX(-50%) scaleX(1); }
+  50% { opacity: .38; transform: translateX(-50%) scaleX(.78); }
+}
+
 .primary-link {
   display: inline-flex;
   align-items: center;
@@ -373,6 +550,15 @@ footer > small {
     line-height: 1.85;
   }
 
+  .crystal-ball-scene {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    width: 122px;
+    height: 112px;
+    margin: 34px auto -20px;
+  }
+
   footer {
     width: calc(100% - 32px);
     height: auto;
@@ -389,6 +575,16 @@ footer > small {
   footer > small {
     text-align: center;
     line-height: 1.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crystal-ball-float,
+  .crystal-glow,
+  .crystal-mist,
+  .crystal-star,
+  .crystal-shadow {
+    animation: none;
   }
 }
 </style>
