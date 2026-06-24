@@ -1,6 +1,6 @@
 import { getApp, getApps, initializeApp } from 'firebase/app'
 import type { FirebaseApp, FirebaseOptions } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+import { inMemoryPersistence, initializeAuth } from 'firebase/auth'
 import type { Auth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import type { Firestore } from 'firebase/firestore'
@@ -42,7 +42,9 @@ export default defineNuxtPlugin<FirebaseInjections>(() => {
 
   const firebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig)
   const firestore = getFirestore(firebaseApp)
-  const firebaseAuth = getAuth(firebaseApp)
+  const firebaseAuth = initializeAuth(firebaseApp, {
+    persistence: inMemoryPersistence
+  })
 
   return {
     provide: {
