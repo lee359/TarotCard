@@ -152,24 +152,43 @@ npm run generate
 
 ### 首頁 `/`
 
+![預覽圖_1](docs/images/image-1.png)
+
 - 輸入 120 字以內的塔羅問題。
 - 選擇感情、事業、自我或今日指引。
-- 查看占卜規則、關於占卜及作者資訊。
 - 只有問題與主題皆完成時，「開始抽牌」才會啟用。
 
+### 規則說明 `/CardRulesModal`
+
+![預覽圖_2](docs/images/image-2.png)
+
+- 查看占卜規則、關於占卜及作者資訊。
+
+
+### 關於頁面 `/about` `/author`
+
+![預覽圖_3](docs/images/image-3.png)
+
+- `/about`：說明塔羅定位與使用原則。
+
+![預覽圖_4](docs/images/image-4.png)
+
+- `/author`：顯示作者資料與個人網站連結。
+
 ### 占卜頁 `/reading`
+
+![預覽圖_5](docs/images/image-5.png)
 
 - 依序翻開過去、現在與未來三張牌。
 - 每張牌會以 50% 機率判定正位或逆位。
 - 提前點擊未解鎖牌卡時會顯示順序提示。
 - 三張牌翻完後可查看問題、整體訊息與個別牌義。
 
-### 關於頁面
 
-- `/about`：說明塔羅定位與使用原則。
-- `/author`：顯示作者資料與個人網站連結。
 
 ### 管理後台 `/admin`
+
+![預覽圖_6](docs/images/image-6.png)
 
 - 使用 Firebase Email/Password 登入。
 - 只有 `admins/{uid}.active == true` 的帳號可進入。
