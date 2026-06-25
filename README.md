@@ -2,7 +2,7 @@
 
 [![Nuxt](https://img.shields.io/badge/Nuxt-4.4.5-00DC82?logo=nuxt&logoColor=white)](https://nuxt.com/)
 [![Vue.js](https://img.shields.io/badge/Vue.js-3.5.34-42B883?logo=vuedotjs&logoColor=white)](https://vuejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-enabled-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0.3-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Firebase](https://img.shields.io/badge/Firebase-12.13.0-FFCA28?logo=firebase&logoColor=black)](https://firebase.google.com/)
 [![Responsive](https://img.shields.io/badge/RWD-Mobile%20Friendly-8B6DB1?logo=css3&logoColor=white)](#5-功能與預期畫面)
 
